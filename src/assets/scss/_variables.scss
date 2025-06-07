@@ -10,3 +10,102 @@ $font-family-base: "Roboto", sans-serif;
 // Размеры
 $sidebar-width: 260px;
 $transition-duration: 0.3s;
+
+// Цветовая схема
+:root {
+  // Основные цвета
+  --primary-color: #4f46e5;
+  --primary-hover: #4338ca;
+  --secondary-color: #e5e7eb;
+  --secondary-hover: #d1d5db;
+  --danger-color: #ef4444;
+  --danger-hover: #dc2626;
+  --success-color: #10b981;
+  --success-hover: #059669;
+  --warning-color: #f59e0b;
+  --warning-hover: #d97706;
+  --info-color: #3b82f6;
+  --info-hover: #2563eb;
+
+  // Фоновые цвета
+  --bg-color: #ffffff;
+  --bg-secondary: #f3f4f6;
+  --bg-tertiary: #e5e7eb;
+
+  // Цвета текста
+  --text-color: #1f2937;
+  --text-secondary: #4b5563;
+  --text-tertiary: #6b7280;
+  --heading-color: #111827;
+
+  // Цвета границ
+  --border-color: #e5e7eb;
+  --border-hover: #d1d5db;
+
+  // Цвета форм
+  --input-bg: #ffffff;
+  --input-border: #d1d5db;
+  --input-focus: #4f46e5;
+
+  // Тени
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+  // Размеры
+  --header-height: 64px;
+  --sidebar-width: 256px;
+  --sidebar-collapsed-width: 64px;
+  --border-radius: 0.375rem;
+  --border-radius-lg: 0.5rem;
+  --border-radius-sm: 0.25rem;
+
+  // Анимации
+  --transition-fast: 150ms;
+  --transition-normal: 200ms;
+  --transition-slow: 300ms;
+}
+
+// Темная тема
+[data-theme="dark"] {
+  // Основные цвета
+  --primary-color: #818cf8;
+  --primary-hover: #6366f1;
+  --secondary-color: #374151;
+  --secondary-hover: #4b5563;
+  --danger-color: #f87171;
+  --danger-hover: #ef4444;
+  --success-color: #34d399;
+  --success-hover: #10b981;
+  --warning-color: #fbbf24;
+  --warning-hover: #f59e0b;
+  --info-color: #60a5fa;
+  --info-hover: #3b82f6;
+
+  // Фоновые цвета
+  --bg-color: #111827;
+  --bg-secondary: #1f2937;
+  --bg-tertiary: #374151;
+
+  // Цвета текста
+  --text-color: #f3f4f6;
+  --text-secondary: #e5e7eb;
+  --text-tertiary: #d1d5db;
+  --heading-color: #ffffff;
+
+  // Цвета границ
+  --border-color: #374151;
+  --border-hover: #4b5563;
+
+  // Цвета форм
+  --input-bg: #1f2937;
+  --input-border: #374151;
+  --input-focus: #818cf8;
+
+  // Тени
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.4), 0 1px 2px -1px rgb(0 0 0 / 0.4);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.4);
+}

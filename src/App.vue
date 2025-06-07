@@ -1,41 +1,66 @@
 <template>
-  <div class="app-container">
-    <AppSidebar />
-
-    <main class="content">
-      <router-view v-slot="{ Component }">
-        <transition name="fade" mode="out-in">
-          <component :is="Component" />
-        </transition>
-      </router-view>
+  <div class="app">
+    <Sidebar v-if="showSidebar" />
+    <main class="main-content" :class="{ 'full-width': !showSidebar }">
+      <router-view />
     </main>
   </div>
 </template>
 
-<script setup>
-import AppSidebar from "@/components/layout/AppSidebar.vue";
+<script>
+import Sidebar from '@/components/Sidebar.vue'
+
+export default {
+  name: 'App',
+  components: {
+    Sidebar
+  },
+  computed: {
+    showSidebar() {
+      return this.$route.name !== 'Login'
+    }
+  }
+}
 </script>
 
-<style lang="scss">
-.app-container {
-  display: flex;
+<style>
+.app {
   min-height: 100vh;
+  display: flex;
 }
 
-.content {
+.main-content {
   flex: 1;
-  padding: 20px;
-  overflow: auto;
+  margin-left: 250px;
+  padding: 2rem;
+  min-height: 100vh;
+  background-color: var(--background-light);
+  transition: margin-left 0.3s ease;
 }
 
-// Анимация перехода между страницами
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
+.main-content.full-width {
+  margin-left: 0;
+  padding: 0;
 }
 
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
+/* Когда сайдбар свернут */
+.sidebar-collapsed + .main-content {
+  margin-left: 70px;
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 70px;
+    padding: 1rem;
+  }
+
+  .main-content.full-width {
+    margin-left: 0;
+  }
+
+  .sidebar:not(.sidebar-collapsed) + .main-content {
+    margin-left: 250px;
+  }
 }
 </style>

@@ -1,99 +1,120 @@
-# Dashboard Template
+# Simple Dashboard
 
-![Vue.js](https://img.shields.io/badge/vuejs-%2335495e.svg?style=for-the-badge&logo=vuedotjs&logoColor=%234FC08D)
-![Vite](https://img.shields.io/badge/vite-%23646CFF.svg?style=for-the-badge&logo=vite&logoColor=white)
-![Pinia](https://img.shields.io/badge/pinia-%2320232a.svg?style=for-the-badge&logo=pinia&logoColor=ffd859)
-![Vue Router](https://img.shields.io/badge/Vue_Router-%2342b883.svg?style=for-the-badge&logo=vue.js&logoColor=white)
-![Node.js](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)
-![ES6](https://img.shields.io/badge/ES6-%23F7DF1E.svg?style=for-the-badge&logo=javascript&logoColor=black)
+[![Vue.js](https://img.shields.io/badge/Vue.js-3.4.15-4FC08D?style=flat-square&logo=vue.js&logoColor=white)](https://vuejs.org/)
+[![Vite](https://img.shields.io/badge/Vite-5.1.4-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Node.js](https://img.shields.io/badge/Node.js-20.11.1-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/)
+[![Pinia](https://img.shields.io/badge/Pinia-2.1.7-yellow?style=flat-square&logo=vue.js&logoColor=white)](https://pinia.vuejs.org/)
+[![SCSS](https://img.shields.io/badge/SCSS-1.71.1-CC6699?style=flat-square&logo=sass&logoColor=white)](https://sass-lang.com/)
+[![ESLint](https://img.shields.io/badge/ESLint-8.56.0-4B32C3?style=flat-square&logo=eslint&logoColor=white)](https://eslint.org/)
+[![Prettier](https://img.shields.io/badge/Prettier-3.2.5-F7B93E?style=flat-square&logo=prettier&logoColor=white)](https://prettier.io/)
 
-Базовый стартовый шаблон для dashboard приложения с современным стеком технологий.
+## Требования
 
-## Особенности
+- Node.js >= 20.11.1
+- npm >= 10.2.4
 
-- ⚡️ **Vite** - мгновенная перезагрузка
-- 🏓 **Vue 3** с Composition API
-- 🍖 **Pinia** для управления состоянием
-- 🧭 **Vue Router** для навигации
-- 🗃️ **ES6 Modules**
-- 🛢️ **Node.js** для серверной части
-
-## Быстрый старт
-
-### 1. Установка зависимостей
+## Установка
 
 ```bash
+# Клонирование репозитория
+git clone https://github.com/yourusername/simple-dashboard.git
+
+# Переход в директорию проекта
+cd simple-dashboard
+
+# Установка зависимостей
 npm install
-# или
-yarn install
 ```
 
-### 2. Запуск dev-сервера
+## Разработка
 
 ```bash
+# Запуск сервера разработки
 npm run dev
-# или
-yarn dev
+
+# Проверка линтером
+npm run lint
+
+# Форматирование кода
+npm run format
 ```
 
-### 3. Сборка для production
+## Тестирование
 
 ```bash
+# Запуск unit-тестов
+npm run test:unit
+
+# Запуск e2e-тестов
+npm run test:e2e
+
+# Проверка покрытия кода тестами
+npm run test:coverage
+```
+
+## Сборка
+
+```bash
+# Сборка для production
 npm run build
-# или
-yarn build
-```
 
-### 4. Превью production сборки
-
-```bash
+# Предпросмотр production сборки
 npm run preview
-# или
-yarn preview
 ```
 
-### Структура проекта
+## Структура проекта
 
 ```
-src/
-├── assets/           # Статические ресурсы
-│   └── scss/         # SCSS style
-├── components/       # UI компоненты
-├── layouts/          # Шаблоны приложения
-├── router/           # Конфигурация роутера
-│   └── index.js
-├── stores/           # Pinia хранилища
-│   └── index.js
-├── views/            # Страницы приложения
-├── App.vue           # Корневой компонент
-└── main.js           # Точка входа
+simple-dashboard/
+├── src/
+│   ├── assets/        # Статические ресурсы
+│   ├── components/    # Vue компоненты
+│   ├── router/        # Маршрутизация
+│   ├── store/         # Pinia store
+│   ├── views/         # Страницы
+│   └── App.vue        # Корневой компонент
+├── tests/             # Тесты
+├── .env.example       # Пример переменных окружения
+├── vite.config.js     # Конфигурация Vite
+└── package.json       # Зависимости и скрипты
 ```
 
-### Конфигурация
+## Функциональность
 
-#### Настройка окружения
+- 🔐 Аутентификация пользователей
+- 👥 Управление пользователями и группами
+- ✅ Управление задачами
+- 📊 Статистика и аналитика
+- 🌓 Светлая и темная темы
+- 📱 Адаптивный дизайн
 
-Создайте файл `.env` в корне проекта
+## Технологии
 
-```
-VITE_API_BASE_URL=http://api.example.com
-VITE_APP_NAME=MyDashboard
-```
+- **Vue.js 3** - Прогрессивный JavaScript фреймворк
+- **Vite** - Современный сборщик
+- **Pinia** - Управление состоянием
+- **Vue Router** - Маршрутизация
+- **SCSS** - Препроцессор CSS
+- **Font Awesome** - Иконки
+- **ESLint & Prettier** - Линтинг и форматирование
 
-### Основные зависимости
+## Тесты
 
-```json
-"dependencies": {
-  "vue": "^3.5.13",
-  "vue-router": "^4.5.1",
-  "pinia": "^3.0.3"
-},
-"devDependencies": {
-  "vite": "^6.3.5",
-  "@vitejs/plugin-vue": "^5.2.3"
-}
-```
+Проект включает следующие тесты:
 
-### Скриншот
+- **Unit тесты** - Тестирование компонентов и логики
+- **E2E тесты** - Тестирование пользовательских сценариев
+- **Интеграционные тесты** - Тестирование взаимодействия компонентов
 
-![Alt text](/screenshot/screen.png?raw=true "Dashboard Home")
+## CI/CD
+
+Проект использует GitHub Actions для:
+
+- Проверки кода линтером
+- Запуска тестов
+- Сборки проекта
+- Деплоя на production
+
+## Лицензия
+
+MIT
