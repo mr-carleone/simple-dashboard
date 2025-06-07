@@ -12,7 +12,8 @@
     "format:check": "prettier --check src/ --config .prettierrc",
     "test:unit": "vitest",
     "test:e2e": "cypress run",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "test:versions": "jest tests/versions.test.js"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
@@ -36,5 +37,8 @@
     "vitest": "^1.2.2",
     "@vitest/coverage-v8": "^1.2.2",
     "cypress": "^13.6.4"
+  },
+  "engines": {
+    "node": ">=22.15.0"
   }
 }
