@@ -13,7 +13,8 @@ module.exports = {
   },
   env: {
     jest: true,
-    node: true
+    node: true,
+    'cypress/globals': true
   },
   globals: {
     describe: 'readonly',
@@ -22,7 +23,8 @@ module.exports = {
     beforeEach: 'readonly',
     afterEach: 'readonly',
     beforeAll: 'readonly',
-    afterAll: 'readonly'
+    afterAll: 'readonly',
+    cy: 'readonly'
   },
   rules: {
     'vue/multi-word-component-names': 'off',
@@ -36,5 +38,11 @@ module.exports = {
         max: 1
       }
     }]
-  }
+  },
+  overrides: [
+    {
+      files: ['cypress/**/*.js'],
+      extends: ['plugin:cypress/recommended']
+    }
+  ]
 }
