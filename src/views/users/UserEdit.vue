@@ -20,17 +20,11 @@
           <h3>Основная информация</h3>
           <div class="form-group">
             <label for="name">Имя</label>
-            <input type="text"
-id="name"
-v-model="user.name"
-required />
+            <input type="text" id="name" v-model="user.name" required />
           </div>
           <div class="form-group">
             <label for="email">Email</label>
-            <input type="email"
-id="email"
-v-model="user.email"
-required />
+            <input type="email" id="email" v-model="user.email" required />
           </div>
           <div class="form-group">
             <label for="role">Роль</label>

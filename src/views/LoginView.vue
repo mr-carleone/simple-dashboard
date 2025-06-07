@@ -5,19 +5,11 @@
       <form @submit.prevent="handleLogin" class="login-form">
         <div class="form-group">
           <label for="email">Email</label>
-          <input type="email"
-id="email"
-v-model="email"
-placeholder="Введите email"
-required />
+          <input type="email" id="email" v-model="email" placeholder="Введите email" required />
         </div>
         <div class="form-group">
           <label for="password">Пароль</label>
-          <input type="password"
-id="password"
-v-model="password"
-placeholder="Введите пароль"
-required />
+          <input type="password" id="password" v-model="password" placeholder="Введите пароль" required />
         </div>
         <div v-if="error" class="error-message">
           {{ error }}
