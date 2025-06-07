@@ -4,7 +4,7 @@
 [![Vite](https://img.shields.io/badge/Vite-5.1.4-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![Node.js](https://img.shields.io/badge/Node.js-22.15.0-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/)
 [![Pinia](https://img.shields.io/badge/Pinia-2.1.7-yellow?style=flat-square&logo=vue.js&logoColor=white)](https://pinia.vuejs.org/)
-[![SCSS](https://img.shields.io/badge/SCSS-1.69.5-CC6699?style=flat-square&logo=sass&logoColor=white)](https://sass-lang.com/)
+[![SCSS](https://img.shields.io/badge/SCSS-undefined-CC6699?style=flat-square&logo=sass&logoColor=white)](https://sass-lang.com/)
 [![ESLint](https://img.shields.io/badge/ESLint-8.56.0-4B32C3?style=flat-square&logo=eslint&logoColor=white)](https://eslint.org/)
 [![Prettier](https://img.shields.io/badge/Prettier-3.2.5-F7B93E?style=flat-square&logo=prettier&logoColor=white)](https://prettier.io/)
 
