@@ -44,7 +44,10 @@ console.log('ENV_LOGIN:', ENV_LOGIN)
 console.log('ENV_PASSWORD:', ENV_PASSWORD)
 
 function handleLogin() {
-  console.log('Attempting login with:', { email: email.value, password: password.value })
+  console.log('Attempting login with:', {
+    email: email.value,
+    password: password.value
+  })
   console.log('Comparing with:', { ENV_LOGIN, ENV_PASSWORD })
 
   if (email.value === ENV_LOGIN && password.value === ENV_PASSWORD) {

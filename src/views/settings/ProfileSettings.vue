@@ -199,7 +199,6 @@ export default {
   height: 100px;
   border-radius: 50%;
   background-color: var(--input-bg);
-  border: 1px solid var(--border-color);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -219,7 +218,6 @@ export default {
 
 .avatar-actions {
   display: flex;
-  flex-direction: column;
   gap: 0.5rem;
 }
 
@@ -240,8 +238,8 @@ export default {
     align-items: flex-start;
   }
 
-  .avatar-actions {
-    flex-direction: row;
+  .settings-actions {
+    flex-direction: column;
   }
 }
 </style>
