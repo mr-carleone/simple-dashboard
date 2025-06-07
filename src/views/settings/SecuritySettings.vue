@@ -58,9 +58,7 @@
             <input type="checkbox" v-model="security.twoFactor" />
             <span>Включить двухфакторную аутентификацию</span>
           </label>
-          <p class="setting-description">
-            Добавьте дополнительный уровень безопасности к вашей учетной записи
-          </p>
+          <p class="setting-description">Добавьте дополнительный уровень безопасности к вашей учетной записи</p>
         </div>
       </div>
     </div>
@@ -79,11 +77,7 @@
                   <span class="session-time">{{ session.lastActive }}</span>
                 </div>
               </div>
-              <button
-                v-if="!session.current"
-                class="btn btn-outline text-danger"
-                @click="terminateSession(session)"
-              >
+              <button v-if="!session.current" class="btn btn-outline text-danger" @click="terminateSession(session)">
                 <i class="fas fa-times"></i>
                 Завершить
               </button>

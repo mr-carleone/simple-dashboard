@@ -11,15 +11,9 @@
         </button>
       </div>
       <div class="calendar-actions">
-        <button class="btn" :class="{ 'btn-primary': view === 'month' }" @click="view = 'month'">
-          Месяц
-        </button>
-        <button class="btn" :class="{ 'btn-primary': view === 'week' }" @click="view = 'week'">
-          Неделя
-        </button>
-        <button class="btn" :class="{ 'btn-primary': view === 'day' }" @click="view = 'day'">
-          День
-        </button>
+        <button class="btn" :class="{ 'btn-primary': view === 'month' }" @click="view = 'month'">Месяц</button>
+        <button class="btn" :class="{ 'btn-primary': view === 'week' }" @click="view = 'week'">Неделя</button>
+        <button class="btn" :class="{ 'btn-primary': view === 'day' }" @click="view = 'day'">День</button>
       </div>
     </div>
 
@@ -217,18 +211,10 @@ export default {
   },
   methods: {
     previousMonth() {
-      this.currentDate = new Date(
-        this.currentDate.getFullYear(),
-        this.currentDate.getMonth() - 1,
-        1
-      )
+      this.currentDate = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth() - 1, 1)
     },
     nextMonth() {
-      this.currentDate = new Date(
-        this.currentDate.getFullYear(),
-        this.currentDate.getMonth() + 1,
-        1
-      )
+      this.currentDate = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth() + 1, 1)
     },
     isToday(date) {
       const today = new Date()

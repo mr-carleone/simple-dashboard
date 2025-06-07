@@ -26,11 +26,7 @@
       <div v-for="task in filteredTasks" :key="task.id" class="task-card">
         <div class="task-header">
           <div class="task-title">
-            <input
-              type="checkbox"
-              :checked="task.status === 'done'"
-              @change="toggleTaskStatus(task)"
-            />
+            <input type="checkbox" :checked="task.status === 'done'" @change="toggleTaskStatus(task)" />
             <h3>{{ task.title }}</h3>
           </div>
           <div class="task-actions">

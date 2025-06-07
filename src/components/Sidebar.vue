@@ -35,11 +35,7 @@
         <div class="nav-item" @click="handleTasksClick">
           <i class="fas fa-tasks"></i>
           <span v-if="!isCollapsed">Задачи</span>
-          <i
-            v-if="!isCollapsed"
-            class="fas fa-chevron-down"
-            :class="{ 'is-open': isTasksOpen }"
-          ></i>
+          <i v-if="!isCollapsed" class="fas fa-chevron-down" :class="{ 'is-open': isTasksOpen }"></i>
         </div>
         <div class="nav-subitems" v-if="!isCollapsed && isTasksOpen">
           <router-link to="/tasks/my" class="nav-subitem" active-class="active">

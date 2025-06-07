@@ -15,11 +15,7 @@
                 <i class="fas fa-upload"></i>
                 Загрузить
               </button>
-              <button
-                v-if="profile.avatar"
-                class="btn btn-outline text-danger"
-                @click="removeAvatar"
-              >
+              <button v-if="profile.avatar" class="btn btn-outline text-danger" @click="removeAvatar">
                 <i class="fas fa-trash"></i>
                 Удалить
               </button>
@@ -49,32 +45,17 @@
       <div class="settings-grid">
         <div class="setting-item">
           <label for="company">Компания</label>
-          <input
-            type="text"
-            id="company"
-            v-model="profile.company"
-            placeholder="Введите название компании"
-          />
+          <input type="text" id="company" v-model="profile.company" placeholder="Введите название компании" />
         </div>
 
         <div class="setting-item">
           <label for="position">Должность</label>
-          <input
-            type="text"
-            id="position"
-            v-model="profile.position"
-            placeholder="Введите вашу должность"
-          />
+          <input type="text" id="position" v-model="profile.position" placeholder="Введите вашу должность" />
         </div>
 
         <div class="setting-item">
           <label for="bio">О себе</label>
-          <textarea
-            id="bio"
-            v-model="profile.bio"
-            placeholder="Расскажите о себе"
-            rows="4"
-          ></textarea>
+          <textarea id="bio" v-model="profile.bio" placeholder="Расскажите о себе" rows="4"></textarea>
         </div>
       </div>
     </div>

@@ -7,13 +7,7 @@
     <div class="settings-content">
       <div class="settings-sidebar">
         <nav class="settings-nav">
-          <router-link
-            v-for="item in navItems"
-            :key="item.path"
-            :to="item.path"
-            class="nav-item"
-            active-class="active"
-          >
+          <router-link v-for="item in navItems" :key="item.path" :to="item.path" class="nav-item" active-class="active">
             <i :class="item.icon"></i>
             <span>{{ item.title }}</span>
           </router-link>

@@ -6,5 +6,14 @@
   "printWidth": 100,
   "bracketSpacing": true,
   "arrowParens": "avoid",
-  "endOfLine": "auto"
+  "endOfLine": "auto",
+  "overrides": [
+    {
+      "files": "*.vue",
+      "options": {
+        "printWidth": 120,
+        "htmlWhitespaceSensitivity": "ignore"
+      }
+    }
+  ]
 }

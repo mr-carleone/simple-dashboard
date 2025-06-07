@@ -98,11 +98,7 @@
         >
           <div class="task-header">
             <div class="task-title">
-              <input
-                type="checkbox"
-                :checked="task.status === 'done'"
-                @change="toggleTaskStatus(task)"
-              />
+              <input type="checkbox" :checked="task.status === 'done'" @change="toggleTaskStatus(task)" />
               <h3>{{ task.title }}</h3>
             </div>
             <div class="task-actions">
@@ -231,8 +227,7 @@ export default {
           task.description.toLowerCase().includes(this.searchQuery.toLowerCase())
         const matchesStatus = !this.statusFilter || task.status === this.statusFilter
         const matchesPriority = !this.priorityFilter || task.priority === this.priorityFilter
-        const matchesAssignee =
-          !this.assigneeFilter || task.assignee.id === parseInt(this.assigneeFilter)
+        const matchesAssignee = !this.assigneeFilter || task.assignee.id === parseInt(this.assigneeFilter)
         return matchesSearch && matchesStatus && matchesPriority && matchesAssignee
       })
     }

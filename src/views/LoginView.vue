@@ -9,13 +9,7 @@
         </div>
         <div class="form-group">
           <label for="password">Пароль</label>
-          <input
-            type="password"
-            id="password"
-            v-model="password"
-            placeholder="Введите пароль"
-            required
-          />
+          <input type="password" id="password" v-model="password" placeholder="Введите пароль" required />
         </div>
         <div v-if="error" class="error-message">
           {{ error }}

@@ -1,9 +1,5 @@
 <template>
-  <button
-    class="theme-toggle"
-    @click="toggleTheme"
-    :title="isDark ? 'Светлая тема' : 'Темная тема'"
-  >
+  <button class="theme-toggle" @click="toggleTheme" :title="isDark ? 'Светлая тема' : 'Темная тема'">
     <i :class="['fas', isDark ? 'fa-sun' : 'fa-moon']"></i>
   </button>
 </template>

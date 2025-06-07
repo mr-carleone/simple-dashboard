@@ -3,12 +3,7 @@
     <div class="users-filters">
       <div class="search-box">
         <i class="fas fa-search"></i>
-        <input
-          type="text"
-          v-model="searchQuery"
-          placeholder="Поиск пользователей..."
-          @input="handleSearch"
-        />
+        <input type="text" v-model="searchQuery" placeholder="Поиск пользователей..." @input="handleSearch" />
       </div>
       <div class="filter-actions">
         <button class="btn btn-outline">

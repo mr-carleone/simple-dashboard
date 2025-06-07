@@ -31,19 +31,11 @@
         <div class="setting-item">
           <label>Тема оформления</label>
           <div class="theme-selector">
-            <button
-              class="theme-btn"
-              :class="{ active: settings.theme === 'light' }"
-              @click="settings.theme = 'light'"
-            >
+            <button class="theme-btn" :class="{ active: settings.theme === 'light' }" @click="settings.theme = 'light'">
               <i class="fas fa-sun"></i>
               Светлая
             </button>
-            <button
-              class="theme-btn"
-              :class="{ active: settings.theme === 'dark' }"
-              @click="settings.theme = 'dark'"
-            >
+            <button class="theme-btn" :class="{ active: settings.theme === 'dark' }" @click="settings.theme = 'dark'">
               <i class="fas fa-moon"></i>
               Тёмная
             </button>

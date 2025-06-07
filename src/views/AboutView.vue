@@ -3,24 +3,18 @@
     <div class="about-header">
       <i class="fas fa-info-circle about-icon"></i>
       <h1>О проекте</h1>
-      <p class="about-lead">
-        Простая и современная панель управления для командной работы, задач и пользователей.
-      </p>
+      <p class="about-lead">Простая и современная панель управления для командной работы, задач и пользователей.</p>
     </div>
     <div class="about-content">
       <div class="about-card">
         <i class="fas fa-users"></i>
         <h2>Для команд</h2>
-        <p>
-          Управляйте пользователями, группами и ролями. Совместная работа и прозрачность процессов.
-        </p>
+        <p>Управляйте пользователями, группами и ролями. Совместная работа и прозрачность процессов.</p>
       </div>
       <div class="about-card">
         <i class="fas fa-tasks"></i>
         <h2>Задачи и проекты</h2>
-        <p>
-          Создавайте, отслеживайте и анализируйте задачи. Гибкая система фильтрации и календарь.
-        </p>
+        <p>Создавайте, отслеживайте и анализируйте задачи. Гибкая система фильтрации и календарь.</p>
       </div>
       <div class="about-card">
         <i class="fas fa-cogs"></i>
@@ -31,7 +25,10 @@
     <div class="about-footer">
       <div class="about-contact">
         <i class="fas fa-envelope"></i>
-        <span>Связаться: <a href="mailto:support@example.com">support@example.com</a></span>
+        <span>
+          Связаться:
+          <a href="mailto:support@example.com">support@example.com</a>
+        </span>
       </div>
       <div class="about-social">
         <a href="#" title="GitHub"><i class="fab fa-github"></i></a>
