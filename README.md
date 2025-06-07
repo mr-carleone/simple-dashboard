@@ -115,6 +115,8 @@ simple-dashboard/
 - Сборки проекта
 - Деплоя на production
 
+> **Note**: Для проверки работоспособности GitHub Actions можно использовать тестовый коммит или запустить workflow вручную через GitHub CLI.
+
 ## Лицензия
 
 MIT
