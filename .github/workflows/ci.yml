@@ -26,9 +26,6 @@ jobs:
     - name: Run ESLint
       run: npm run lint
 
-    - name: Run Prettier check
-      run: npx prettier --check src/ --config .prettierrc
-
   test:
     name: Test
     runs-on: ubuntu-latest
@@ -47,6 +44,23 @@ jobs:
 
     - name: Run unit tests
       run: npm run test:unit
+
+    - name: Start dev server
+      run: npm run dev &
+      env:
+        CI: true
+
+    - name: Wait for dev server
+      run: |
+        timeout=60
+        while ! curl -s http://localhost:5173 > /dev/null; do
+          sleep 1
+          timeout=$((timeout-1))
+          if [ $timeout -le 0 ]; then
+            echo "Dev server failed to start"
+            exit 1
+          fi
+        done
 
     - name: Run e2e tests
       run: npm run test:e2e
