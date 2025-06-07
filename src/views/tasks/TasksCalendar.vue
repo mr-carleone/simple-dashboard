@@ -286,7 +286,6 @@ export default {
       const date = new Date(this.currentDate)
       date.setDate(date.getDate() - date.getDay() + dayIndex + 1)
       const dateString = date.toISOString().split('T')[0]
-      const hourString = hour.toString().padStart(2, '0')
 
       return this.tasks.filter(task => {
         const taskHour = parseInt(task.time.split(':')[0])
@@ -295,7 +294,6 @@ export default {
     },
     getTasksForHour(hour) {
       const dateString = this.currentDate.toISOString().split('T')[0]
-      const hourString = hour.toString().padStart(2, '0')
 
       return this.tasks.filter(task => {
         const taskHour = parseInt(task.time.split(':')[0])

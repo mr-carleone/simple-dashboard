@@ -16,7 +16,7 @@
         <!-- Изменено: раздельная обработка для пунктов с детьми и без -->
         <div
           class="menu-item__header"
-          @click="handleItemClick(index, item, $event)"
+          @click="handleItemClick(index, item)"
         >
           <span class="menu-item__title">
             <font-awesome-icon
@@ -152,7 +152,7 @@ const isActive = (item) => {
   return false;
 };
 
-const handleItemClick = (index, item, event) => {
+const handleItemClick = (index, item) => {
   const menuItem = menuItems.value[index];
 
   if (mainStore.isSidebarCollapsed && item.children) {
