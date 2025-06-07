@@ -1,0 +1,68 @@
+name: Update Versions
+
+on:
+  push:
+    paths:
+      - 'package.json'
+    branches:
+      - main
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.15.0'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Update README versions
+        run: |
+          # Get versions from package.json
+          VUE_VERSION=$(node -p "require('./package.json').dependencies.vue")
+          VITE_VERSION=$(node -p "require('./package.json').devDependencies.vite")
+          NODE_VERSION=$(node -p "require('./package.json').engines.node")
+          PINIA_VERSION=$(node -p "require('./package.json').dependencies.pinia")
+          SCSS_VERSION=$(node -p "require('./package.json').dependencies.sass")
+          ESLINT_VERSION=$(node -p "require('./package.json').devDependencies.eslint")
+          PRETTIER_VERSION=$(node -p "require('./package.json').devDependencies.prettier")
+
+          # Update README.md
+          sed -i "s/Vue.js-[0-9.]*-4FC08D/Vue.js-${VUE_VERSION#^}-4FC08D/g" README.md
+          sed -i "s/Vite-[0-9.]*-646CFF/Vite-${VITE_VERSION#^}-646CFF/g" README.md
+          sed -i "s/Node.js-[0-9.]*-339933/Node.js-${NODE_VERSION#>=}-339933/g" README.md
+          sed -i "s/Pinia-[0-9.]*-yellow/Pinia-${PINIA_VERSION#^}-yellow/g" README.md
+          sed -i "s/SCSS-[0-9.]*-CC6699/SCSS-${SCSS_VERSION#^}-CC6699/g" README.md
+          sed -i "s/ESLint-[0-9.]*-4B32C3/ESLint-${ESLINT_VERSION#^}-4B32C3/g" README.md
+          sed -i "s/Prettier-[0-9.]*-F7B93E/Prettier-${PRETTIER_VERSION#^}-F7B93E/g" README.md
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore: update dependency versions in README'
+          title: 'chore: update dependency versions in README'
+          body: |
+            This PR updates the dependency versions in README.md to match package.json.
+
+            Changes:
+            - Updated Vue.js version
+            - Updated Vite version
+            - Updated Node.js version
+            - Updated Pinia version
+            - Updated SCSS version
+            - Updated ESLint version
+            - Updated Prettier version
+          branch: update-readme-versions
+          base: main
