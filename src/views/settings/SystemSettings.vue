@@ -5,11 +5,7 @@
       <div class="settings-grid">
         <div class="setting-item">
           <label>Название системы</label>
-          <input
-            type="text"
-            v-model="settings.systemName"
-            placeholder="Введите название системы"
-          >
+          <input type="text" v-model="settings.systemName" placeholder="Введите название системы" />
         </div>
         <div class="setting-item">
           <label>Язык интерфейса</label>
@@ -74,19 +70,13 @@
       <div class="settings-grid">
         <div class="setting-item">
           <label class="checkbox-label">
-            <input
-              type="checkbox"
-              v-model="settings.notifications.email"
-            >
+            <input type="checkbox" v-model="settings.notifications.email" />
             <span>Email уведомления</span>
           </label>
         </div>
         <div class="setting-item">
           <label class="checkbox-label">
-            <input
-              type="checkbox"
-              v-model="settings.notifications.browser"
-            >
+            <input type="checkbox" v-model="settings.notifications.browser" />
             <span>Браузерные уведомления</span>
           </label>
         </div>
@@ -180,7 +170,7 @@ export default {
     color: var(--text-secondary);
   }
 
-  input[type="text"],
+  input[type='text'],
   select {
     width: 100%;
     padding: 0.75rem;
@@ -259,7 +249,7 @@ export default {
   gap: 0.5rem;
   cursor: pointer;
 
-  input[type="checkbox"] {
+  input[type='checkbox'] {
     width: 18px;
     height: 18px;
     cursor: pointer;

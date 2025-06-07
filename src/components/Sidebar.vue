@@ -8,7 +8,7 @@
     </div>
 
     <div class="user-info" v-if="!isCollapsed">
-      <img :src="user.avatar" :alt="user.name" class="user-avatar">
+      <img :src="user.avatar" :alt="user.name" class="user-avatar" />
       <div class="user-details">
         <span class="user-name">{{ user.name }}</span>
         <span class="user-role">{{ user.role }}</span>
@@ -83,7 +83,11 @@
         <button class="logout-btn" @click="logout" title="Выйти">
           <i class="fas fa-sign-out-alt"></i>
         </button>
-        <button class="collapse-btn" @click="toggleSidebar" :title="isCollapsed ? 'Развернуть панель' : 'Свернуть панель'">
+        <button
+          class="collapse-btn"
+          @click="toggleSidebar"
+          :title="isCollapsed ? 'Развернуть панель' : 'Свернуть панель'"
+        >
           <i :class="isCollapsed ? 'fas fa-chevron-right' : 'fas fa-chevron-left'"></i>
         </button>
       </div>
@@ -111,7 +115,7 @@ export default {
     }
   },
   watch: {
-    '$route': {
+    $route: {
       handler(to) {
         // Если маршрут начинается с /tasks и сайдбар свернут, разворачиваем его
         if (to.path.startsWith('/tasks') && this.isCollapsed) {

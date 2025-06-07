@@ -7,7 +7,7 @@
           <label>Аватар</label>
           <div class="avatar-upload">
             <div class="avatar-preview">
-              <img v-if="profile.avatar" :src="profile.avatar" alt="Avatar">
+              <img v-if="profile.avatar" :src="profile.avatar" alt="Avatar" />
               <i v-else class="fas fa-user"></i>
             </div>
             <div class="avatar-actions">
@@ -29,32 +29,17 @@
 
         <div class="setting-item">
           <label for="name">Имя</label>
-          <input
-            type="text"
-            id="name"
-            v-model="profile.name"
-            placeholder="Введите ваше имя"
-          >
+          <input type="text" id="name" v-model="profile.name" placeholder="Введите ваше имя" />
         </div>
 
         <div class="setting-item">
           <label for="email">Email</label>
-          <input
-            type="email"
-            id="email"
-            v-model="profile.email"
-            placeholder="Введите ваш email"
-          >
+          <input type="email" id="email" v-model="profile.email" placeholder="Введите ваш email" />
         </div>
 
         <div class="setting-item">
           <label for="phone">Телефон</label>
-          <input
-            type="tel"
-            id="phone"
-            v-model="profile.phone"
-            placeholder="Введите ваш телефон"
-          >
+          <input type="tel" id="phone" v-model="profile.phone" placeholder="Введите ваш телефон" />
         </div>
       </div>
     </div>
@@ -69,7 +54,7 @@
             id="company"
             v-model="profile.company"
             placeholder="Введите название компании"
-          >
+          />
         </div>
 
         <div class="setting-item">
@@ -79,7 +64,7 @@
             id="position"
             v-model="profile.position"
             placeholder="Введите вашу должность"
-          >
+          />
         </div>
 
         <div class="setting-item">
@@ -179,9 +164,9 @@ export default {
     color: var(--text-secondary);
   }
 
-  input[type="text"],
-  input[type="email"],
-  input[type="tel"],
+  input[type='text'],
+  input[type='email'],
+  input[type='tel'],
   textarea {
     width: 100%;
     padding: 0.75rem;

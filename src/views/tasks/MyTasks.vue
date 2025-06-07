@@ -3,11 +3,7 @@
     <div class="tasks-filters">
       <div class="search-box">
         <i class="fas fa-search"></i>
-        <input
-          type="text"
-          v-model="searchQuery"
-          placeholder="Поиск задач..."
-        >
+        <input type="text" v-model="searchQuery" placeholder="Поиск задач..." />
       </div>
       <div class="filters">
         <select v-model="statusFilter">
@@ -34,7 +30,7 @@
               type="checkbox"
               :checked="task.status === 'done'"
               @change="toggleTaskStatus(task)"
-            >
+            />
             <h3>{{ task.title }}</h3>
           </div>
           <div class="task-actions">
@@ -61,7 +57,7 @@
             </span>
           </div>
           <div class="task-assignee">
-            <img :src="task.assignee.avatar" :alt="task.assignee.name" class="avatar">
+            <img :src="task.assignee.avatar" :alt="task.assignee.name" class="avatar" />
             <span>{{ task.assignee.name }}</span>
           </div>
         </div>
@@ -121,8 +117,9 @@ export default {
   computed: {
     filteredTasks() {
       return this.tasks.filter(task => {
-        const matchesSearch = task.title.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-                            task.description.toLowerCase().includes(this.searchQuery.toLowerCase())
+        const matchesSearch =
+          task.title.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          task.description.toLowerCase().includes(this.searchQuery.toLowerCase())
         const matchesStatus = !this.statusFilter || task.status === this.statusFilter
         const matchesPriority = !this.priorityFilter || task.priority === this.priorityFilter
         return matchesSearch && matchesStatus && matchesPriority
@@ -132,18 +129,18 @@ export default {
   methods: {
     getStatusText(status) {
       const statusMap = {
-        'todo': 'К выполнению',
+        todo: 'К выполнению',
         'in-progress': 'В работе',
-        'review': 'На проверке',
-        'done': 'Выполнено'
+        review: 'На проверке',
+        done: 'Выполнено'
       }
       return statusMap[status] || status
     },
     getPriorityText(priority) {
       const priorityMap = {
-        'high': 'Высокий',
-        'medium': 'Средний',
-        'low': 'Низкий'
+        high: 'Высокий',
+        medium: 'Средний',
+        low: 'Низкий'
       }
       return priorityMap[priority] || priority
     },
@@ -246,7 +243,7 @@ export default {
       align-items: center;
       gap: 0.75rem;
 
-      input[type="checkbox"] {
+      input[type='checkbox'] {
         width: 1.25rem;
         height: 1.25rem;
         cursor: pointer;

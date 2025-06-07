@@ -5,13 +5,7 @@
       <form @submit.prevent="handleLogin" class="login-form">
         <div class="form-group">
           <label for="email">Email</label>
-          <input
-            type="email"
-            id="email"
-            v-model="email"
-            placeholder="Введите email"
-            required
-          >
+          <input type="email" id="email" v-model="email" placeholder="Введите email" required />
         </div>
         <div class="form-group">
           <label for="password">Пароль</label>
@@ -21,7 +15,7 @@
             v-model="password"
             placeholder="Введите пароль"
             required
-          >
+          />
         </div>
         <div v-if="error" class="error-message">
           {{ error }}
@@ -73,7 +67,13 @@ function handleLogin() {
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family:
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
   overflow: hidden;
 }
 

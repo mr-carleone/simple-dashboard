@@ -8,7 +8,7 @@
           v-model="searchQuery"
           placeholder="Поиск пользователей..."
           @input="handleSearch"
-        >
+        />
       </div>
       <div class="filter-actions">
         <button class="btn btn-outline">
@@ -165,7 +165,8 @@ export default {
     border-collapse: collapse;
     font-size: 0.875rem;
 
-    th, td {
+    th,
+    td {
       padding: 1rem;
       text-align: left;
       border-bottom: 1px solid var(--border-color);

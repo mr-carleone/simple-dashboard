@@ -246,7 +246,8 @@ export default {
     width: 100%;
     border-collapse: collapse;
 
-    th, td {
+    th,
+    td {
       padding: 1rem;
       text-align: left;
       border-bottom: 1px solid var(--border-color);

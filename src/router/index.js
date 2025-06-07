@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import LoginView from '../views/LoginView.vue'
 import ProfileView from '../views/ProfileView.vue'
@@ -20,227 +20,227 @@ import TasksCalendar from '../views/tasks/TasksCalendar.vue'
 
 const routes = [
   {
-    path: "/login",
-    name: "Login",
+    path: '/login',
+    name: 'Login',
     component: LoginView,
     meta: {
-      title: "Вход в систему",
+      title: 'Вход в систему',
       requiresAuth: false
     }
   },
   {
-    path: "/",
-    name: "Home",
+    path: '/',
+    name: 'Home',
     component: HomeView,
     meta: {
-      title: "Главная",
+      title: 'Главная',
       requiresAuth: true
     }
   },
   {
-    path: "/users",
-    name: "Users",
+    path: '/users',
+    name: 'Users',
     component: UsersLayout,
     meta: {
-      title: "Пользователи",
+      title: 'Пользователи',
       requiresAuth: true
     },
     children: [
       {
-        path: "",
-        name: "UsersList",
+        path: '',
+        name: 'UsersList',
         component: UsersList,
         meta: {
-          title: "Список пользователей",
+          title: 'Список пользователей',
           requiresAuth: true
         }
       },
       {
-        path: ":id",
-        name: "UserDetails",
+        path: ':id',
+        name: 'UserDetails',
         component: UserDetails,
         meta: {
-          title: "Детали пользователя",
+          title: 'Детали пользователя',
           requiresAuth: true
         }
       },
       {
-        path: ":id/edit",
-        name: "UserEdit",
+        path: ':id/edit',
+        name: 'UserEdit',
         component: UserEdit,
         meta: {
-          title: "Редактирование пользователя",
+          title: 'Редактирование пользователя',
           requiresAuth: true
         }
       }
     ]
   },
   {
-    path: "/groups",
-    name: "Groups",
-    component: () => import("@/views/groups/GroupsLayout.vue"),
+    path: '/groups',
+    name: 'Groups',
+    component: () => import('@/views/groups/GroupsLayout.vue'),
     meta: {
-      title: "Группы",
+      title: 'Группы',
       requiresAuth: true
     },
     children: [
       {
-        path: "",
-        name: "GroupsList",
-        component: () => import("@/views/groups/GroupsList.vue"),
+        path: '',
+        name: 'GroupsList',
+        component: () => import('@/views/groups/GroupsList.vue'),
         meta: {
-          title: "Список групп",
+          title: 'Список групп',
           requiresAuth: true
         }
       },
       {
-        path: ":id",
-        name: "GroupDetails",
-        component: () => import("@/views/groups/GroupDetails.vue"),
+        path: ':id',
+        name: 'GroupDetails',
+        component: () => import('@/views/groups/GroupDetails.vue'),
         meta: {
-          title: "Детали группы",
+          title: 'Детали группы',
           requiresAuth: true
         }
       }
     ]
   },
   {
-    path: "/tasks",
-    name: "Tasks",
+    path: '/tasks',
+    name: 'Tasks',
     component: TasksLayout,
     meta: {
-      title: "Задачи",
+      title: 'Задачи',
       requiresAuth: true
     },
     children: [
       {
-        path: "my",
-        name: "MyTasks",
+        path: 'my',
+        name: 'MyTasks',
         component: MyTasks,
         meta: {
-          title: "Мои задачи",
+          title: 'Мои задачи',
           requiresAuth: true
         }
       },
       {
-        path: "team",
-        name: "TeamTasks",
+        path: 'team',
+        name: 'TeamTasks',
         component: TeamTasks,
         meta: {
-          title: "Задачи команды",
+          title: 'Задачи команды',
           requiresAuth: true
         }
       },
       {
-        path: "project",
-        name: "ProjectTasks",
+        path: 'project',
+        name: 'ProjectTasks',
         component: ProjectTasks,
         meta: {
-          title: "Проектные задачи",
+          title: 'Проектные задачи',
           requiresAuth: true
         }
       },
       {
-        path: "calendar",
-        name: "TasksCalendar",
+        path: 'calendar',
+        name: 'TasksCalendar',
         component: TasksCalendar,
         meta: {
-          title: "Календарь задач",
+          title: 'Календарь задач',
           requiresAuth: true
         }
       }
     ]
   },
   {
-    path: "/profile",
-    name: "Profile",
+    path: '/profile',
+    name: 'Profile',
     component: ProfileView,
     meta: {
-      title: "Профиль",
+      title: 'Профиль',
       requiresAuth: true
     }
   },
   {
-    path: "/about",
-    name: "About",
+    path: '/about',
+    name: 'About',
     component: AboutView,
     meta: {
-      title: "О нас",
+      title: 'О нас',
       requiresAuth: true
     }
   },
   // Вложенные настройки
   {
-    path: "/settings",
-    name: "Settings",
+    path: '/settings',
+    name: 'Settings',
     component: SettingsLayout,
-    redirect: "/settings/system",
+    redirect: '/settings/system',
     meta: {
-      title: "Настройки",
+      title: 'Настройки',
       requiresAuth: true
     },
     children: [
       {
-        path: "system",
-        name: "SystemSettings",
+        path: 'system',
+        name: 'SystemSettings',
         component: SystemSettings,
         meta: {
-          title: "Системные настройки",
+          title: 'Системные настройки',
           requiresAuth: true
         }
       },
       {
-        path: "profile",
-        name: "ProfileSettings",
+        path: 'profile',
+        name: 'ProfileSettings',
         component: ProfileSettings,
         meta: {
-          title: "Настройки профиля",
+          title: 'Настройки профиля',
           requiresAuth: true
         }
       },
       {
-        path: "security",
-        name: "SecuritySettings",
+        path: 'security',
+        name: 'SecuritySettings',
         component: SecuritySettings,
         meta: {
-          title: "Настройки безопасности",
+          title: 'Настройки безопасности',
           requiresAuth: true
         }
       }
     ]
   },
   {
-    path: "/:pathMatch(.*)*",
-    name: "NotFound",
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
     component: NotFoundView,
     meta: {
-      title: "404 - Страница не найдена",
+      title: '404 - Страница не найдена',
       requiresAuth: false
     }
   }
-];
+]
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes
-});
+})
 
 // Глобальный guard для проверки аутентификации
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = localStorage.getItem('token');
+  const isAuthenticated = localStorage.getItem('token')
 
   // Установка заголовка страницы
-  document.title = to.meta.title ? `${to.meta.title} | Dashboard` : 'Dashboard';
+  document.title = to.meta.title ? `${to.meta.title} | Dashboard` : 'Dashboard'
 
   if (to.meta.requiresAuth && !isAuthenticated) {
     // Если маршрут требует аутентификации, но пользователь не аутентифицирован
-    next({ name: 'Login' });
+    next({ name: 'Login' })
   } else if (to.name === 'Login' && isAuthenticated) {
     // Если пользователь уже аутентифицирован и пытается зайти на страницу входа
-    next({ name: 'Home' });
+    next({ name: 'Home' })
   } else {
-    next();
+    next()
   }
-});
+})
 
-export default router;
+export default router

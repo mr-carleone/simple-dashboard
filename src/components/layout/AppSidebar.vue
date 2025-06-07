@@ -1,8 +1,5 @@
 <template>
-  <nav
-    class="sidebar"
-    :class="{ 'sidebar--collapsed': mainStore.isSidebarCollapsed }"
-  >
+  <nav class="sidebar" :class="{ 'sidebar--collapsed': mainStore.isSidebarCollapsed }">
     <div class="sidebar__menu">
       <div
         v-for="(item, index) in menuItems"
@@ -10,14 +7,11 @@
         class="menu-item"
         :class="{
           'menu-item--has-children': item.children,
-          'menu-item--active': isActive(item),
+          'menu-item--active': isActive(item)
         }"
       >
         <!-- Изменено: раздельная обработка для пунктов с детьми и без -->
-        <div
-          class="menu-item__header"
-          @click="handleItemClick(index, item)"
-        >
+        <div class="menu-item__header" @click="handleItemClick(index, item)">
           <span class="menu-item__title">
             <font-awesome-icon
               v-if="item.icon"
@@ -25,11 +19,9 @@
               class="menu-item__icon"
               fixed-width
             />
-            <span
-              v-show="!mainStore.isSidebarCollapsed"
-              class="menu-item__text"
-              >{{ item.title }}</span
-            >
+            <span v-show="!mainStore.isSidebarCollapsed" class="menu-item__text">{{
+              item.title
+            }}</span>
           </span>
           <font-awesome-icon
             v-if="item.children && !mainStore.isSidebarCollapsed"
@@ -64,138 +56,136 @@
 
     <div class="sidebar__toggle">
       <el-button circle size="small" @click="mainStore.toggleSidebar">
-        <font-awesome-icon
-          :icon="mainStore.toggleSidebar ? 'chevron-right' : 'chevron-left'"
-        />
+        <font-awesome-icon :icon="mainStore.toggleSidebar ? 'chevron-right' : 'chevron-left'" />
       </el-button>
     </div>
   </nav>
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { useMainStore } from "@/store/index";
+import { ref, onMounted, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useMainStore } from '@/store/index'
 
-const route = useRoute();
-const router = useRouter();
-const mainStore = useMainStore();
+const route = useRoute()
+const router = useRouter()
+const mainStore = useMainStore()
 
 const menuItems = ref([
   {
-    title: "Главная",
-    path: "/",
-    icon: "home",
+    title: 'Главная',
+    path: '/',
+    icon: 'home'
   },
   {
-    title: "Пользователи",
-    icon: "users",
+    title: 'Пользователи',
+    icon: 'users',
     isOpen: false,
     children: [
       {
-        title: "Список",
-        path: "/users",
-        icon: "list",
+        title: 'Список',
+        path: '/users',
+        icon: 'list'
       },
       {
-        title: "Группы",
-        path: "/groups",
-        icon: "folder",
-      },
-    ],
+        title: 'Группы',
+        path: '/groups',
+        icon: 'folder'
+      }
+    ]
   },
   {
-    title: "Настройки",
-    icon: "cog",
+    title: 'Настройки',
+    icon: 'cog',
     isOpen: false,
     children: [
       {
-        title: "Системные",
-        path: "/settings/system",
+        title: 'Системные',
+        path: '/settings/system'
       },
       {
-        title: "Профиль",
-        path: "/settings/profile",
-      },
-    ],
+        title: 'Профиль',
+        path: '/settings/profile'
+      }
+    ]
   },
   {
-    title: "О приложении",
-    path: "/about",
-    icon: "info-circle",
+    title: 'О приложении',
+    path: '/about',
+    icon: 'info-circle'
   },
   {
-    title: "Профиль",
-    path: "/profile",
-    icon: "user",
-  },
-]);
+    title: 'Профиль',
+    path: '/profile',
+    icon: 'user'
+  }
+])
 
 // Автоматическое закрытие подменю при изменении маршрута
 watch(route, () => {
-  menuItems.value.forEach((item) => {
+  menuItems.value.forEach(item => {
     if (item.children) {
-      item.isOpen = false;
+      item.isOpen = false
     }
-  });
-});
+  })
+})
 
-const isActive = (item) => {
+const isActive = item => {
   if (item.path) {
-    return route.path === item.path;
+    return route.path === item.path
   }
 
   if (item.children) {
-    return item.children.some((child) => route.path.startsWith(child.path));
+    return item.children.some(child => route.path.startsWith(child.path))
   }
 
-  return false;
-};
+  return false
+}
 
 const handleItemClick = (index, item) => {
-  const menuItem = menuItems.value[index];
+  const menuItem = menuItems.value[index]
 
   if (mainStore.isSidebarCollapsed && item.children) {
-    mainStore.expandSidebar();
-    menuItem.isOpen = true;
-    closeOtherSubmenus(index);
-    return;
+    mainStore.expandSidebar()
+    menuItem.isOpen = true
+    closeOtherSubmenus(index)
+    return
   }
 
   if (item.children) {
-    menuItem.isOpen = !menuItem.isOpen;
+    menuItem.isOpen = !menuItem.isOpen
     if (menuItem.isOpen) {
-      closeOtherSubmenus(index);
+      closeOtherSubmenus(index)
     }
   } else {
-    router.push(item.path);
+    router.push(item.path)
   }
-};
+}
 
 // Закрытие других подменю при открытии текущего
-const closeOtherSubmenus = (currentIndex) => {
+const closeOtherSubmenus = currentIndex => {
   menuItems.value.forEach((item, index) => {
     if (index !== currentIndex && item.children) {
-      item.isOpen = false;
+      item.isOpen = false
     }
-  });
-};
+  })
+}
 
 // Адаптация высоты под экран
 onMounted(() => {
   const updateHeight = () => {
-    const vh = window.innerHeight * 0.01;
-    document.documentElement.style.setProperty("--vh", `${vh}px`);
-  };
+    const vh = window.innerHeight * 0.01
+    document.documentElement.style.setProperty('--vh', `${vh}px`)
+  }
 
-  updateHeight();
-  window.addEventListener("resize", updateHeight);
-});
+  updateHeight()
+  window.addEventListener('resize', updateHeight)
+})
 </script>
 
 <style lang="scss" scoped>
-@use "@/assets/scss/variables" as *;
-@use "sass:color";
+@use '@/assets/scss/variables' as *;
+@use 'sass:color';
 
 :root {
   --vh: 1vh; /* Базовое значение для адаптивной высоты */
@@ -357,7 +347,7 @@ onMounted(() => {
 
     /* Сдвигаем индикатор активного пункта ближе к краю */
     &::before {
-      content: "";
+      content: '';
       position: absolute;
       left: 20px; /* Сдвигаем ближе к краю (было 25px) */
       top: 50%;

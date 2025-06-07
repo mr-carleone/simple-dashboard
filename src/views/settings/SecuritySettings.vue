@@ -11,11 +11,8 @@
               id="currentPassword"
               v-model="passwords.current"
               placeholder="Введите текущий пароль"
-            >
-            <button
-              class="toggle-password"
-              @click="showCurrentPassword = !showCurrentPassword"
-            >
+            />
+            <button class="toggle-password" @click="showCurrentPassword = !showCurrentPassword">
               <i :class="showCurrentPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
             </button>
           </div>
@@ -29,11 +26,8 @@
               id="newPassword"
               v-model="passwords.new"
               placeholder="Введите новый пароль"
-            >
-            <button
-              class="toggle-password"
-              @click="showNewPassword = !showNewPassword"
-            >
+            />
+            <button class="toggle-password" @click="showNewPassword = !showNewPassword">
               <i :class="showNewPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
             </button>
           </div>
@@ -47,11 +41,8 @@
               id="confirmPassword"
               v-model="passwords.confirm"
               placeholder="Подтвердите новый пароль"
-            >
-            <button
-              class="toggle-password"
-              @click="showConfirmPassword = !showConfirmPassword"
-            >
+            />
+            <button class="toggle-password" @click="showConfirmPassword = !showConfirmPassword">
               <i :class="showConfirmPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
             </button>
           </div>
@@ -64,10 +55,7 @@
       <div class="settings-grid">
         <div class="setting-item">
           <label class="checkbox-label">
-            <input
-              type="checkbox"
-              v-model="security.twoFactor"
-            >
+            <input type="checkbox" v-model="security.twoFactor" />
             <span>Включить двухфакторную аутентификацию</span>
           </label>
           <p class="setting-description">
@@ -267,7 +255,7 @@ export default {
   gap: 0.5rem;
   cursor: pointer;
 
-  input[type="checkbox"] {
+  input[type='checkbox'] {
     width: 18px;
     height: 18px;
     cursor: pointer;

@@ -4,7 +4,7 @@
       <div class="profile-cover"></div>
       <div class="profile-info">
         <div class="profile-avatar">
-          <img :src="user.avatar" :alt="user.name">
+          <img :src="user.avatar" :alt="user.name" />
           <button class="avatar-edit" title="Изменить фото">
             <i class="fas fa-camera"></i>
           </button>

@@ -5,7 +5,7 @@ $accent: #3498db;
 $text-light: #ecf0f1;
 
 // Шрифты
-$font-family-base: "Roboto", sans-serif;
+$font-family-base: 'Roboto', sans-serif;
 
 // Размеры
 $sidebar-width: 260px;
@@ -68,7 +68,7 @@ $transition-duration: 0.3s;
 }
 
 // Темная тема
-[data-theme="dark"] {
+[data-theme='dark'] {
   // Основные цвета
   --primary-color: #818cf8;
   --primary-hover: #6366f1;

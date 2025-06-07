@@ -19,11 +19,11 @@
 
 <script setup>
 const stats = [
-  { title: "Пользователи", value: 124 },
-  { title: "Группы", value: 12 },
-  { title: "Сообщения", value: 2456 },
-  { title: "Задачи", value: 18 },
-];
+  { title: 'Пользователи', value: 124 },
+  { title: 'Группы', value: 12 },
+  { title: 'Сообщения', value: 2456 },
+  { title: 'Задачи', value: 18 }
+]
 </script>
 
 <style scoped>

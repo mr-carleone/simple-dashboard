@@ -11,25 +11,13 @@
         </button>
       </div>
       <div class="calendar-actions">
-        <button
-          class="btn"
-          :class="{ 'btn-primary': view === 'month' }"
-          @click="view = 'month'"
-        >
+        <button class="btn" :class="{ 'btn-primary': view === 'month' }" @click="view = 'month'">
           Месяц
         </button>
-        <button
-          class="btn"
-          :class="{ 'btn-primary': view === 'week' }"
-          @click="view = 'week'"
-        >
+        <button class="btn" :class="{ 'btn-primary': view === 'week' }" @click="view = 'week'">
           Неделя
         </button>
-        <button
-          class="btn"
-          :class="{ 'btn-primary': view === 'day' }"
-          @click="view = 'day'"
-        >
+        <button class="btn" :class="{ 'btn-primary': view === 'day' }" @click="view = 'day'">
           День
         </button>
       </div>
@@ -48,7 +36,7 @@
           class="day-cell"
           :class="{
             'other-month': !day.currentMonth,
-            'today': day.isToday,
+            today: day.isToday,
             'has-tasks': getTasksForDay(day.date).length > 0
           }"
         >
@@ -77,35 +65,19 @@
     <div class="week-view" v-else-if="view === 'week'">
       <div class="week-header">
         <div class="time-column"></div>
-        <div
-          v-for="day in weekDays"
-          :key="day"
-          class="day-column"
-        >
+        <div v-for="day in weekDays" :key="day" class="day-column">
           {{ day }}
         </div>
       </div>
       <div class="week-grid">
         <div class="time-slots">
-          <div
-            v-for="hour in hours"
-            :key="hour"
-            class="time-slot"
-          >
+          <div v-for="hour in hours" :key="hour" class="time-slot">
             {{ formatHour(hour) }}
           </div>
         </div>
         <div class="week-days">
-          <div
-            v-for="(day, dayIndex) in weekDays"
-            :key="day"
-            class="day-column"
-          >
-            <div
-              v-for="hour in hours"
-              :key="hour"
-              class="time-slot"
-            >
+          <div v-for="(day, dayIndex) in weekDays" :key="day" class="day-column">
+            <div v-for="hour in hours" :key="hour" class="time-slot">
               <div
                 v-for="task in getTasksForTimeSlot(dayIndex, hour)"
                 :key="task.id"
@@ -128,11 +100,7 @@
         <h3>{{ formatDate(currentDate) }}</h3>
       </div>
       <div class="day-timeline">
-        <div
-          v-for="hour in hours"
-          :key="hour"
-          class="time-slot"
-        >
+        <div v-for="hour in hours" :key="hour" class="time-slot">
           <div class="time-label">{{ formatHour(hour) }}</div>
           <div class="time-content">
             <div
@@ -264,9 +232,11 @@ export default {
     },
     isToday(date) {
       const today = new Date()
-      return date.getDate() === today.getDate() &&
-             date.getMonth() === today.getMonth() &&
-             date.getFullYear() === today.getFullYear()
+      return (
+        date.getDate() === today.getDate() &&
+        date.getMonth() === today.getMonth() &&
+        date.getFullYear() === today.getFullYear()
+      )
     },
     formatDate(date) {
       return date.toLocaleDateString('ru-RU', {

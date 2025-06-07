@@ -20,21 +20,11 @@
           <h3>Основная информация</h3>
           <div class="form-group">
             <label for="name">Имя</label>
-            <input
-              type="text"
-              id="name"
-              v-model="user.name"
-              required
-            >
+            <input type="text" id="name" v-model="user.name" required />
           </div>
           <div class="form-group">
             <label for="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              v-model="user.email"
-              required
-            >
+            <input type="email" id="email" v-model="user.email" required />
           </div>
           <div class="form-group">
             <label for="role">Роль</label>
@@ -58,35 +48,19 @@
           <h3>Дополнительная информация</h3>
           <div class="form-group">
             <label for="phone">Телефон</label>
-            <input
-              type="tel"
-              id="phone"
-              v-model="user.phone"
-            >
+            <input type="tel" id="phone" v-model="user.phone" />
           </div>
           <div class="form-group">
             <label for="address">Адрес</label>
-            <input
-              type="text"
-              id="address"
-              v-model="user.address"
-            >
+            <input type="text" id="address" v-model="user.address" />
           </div>
           <div class="form-group">
             <label for="company">Компания</label>
-            <input
-              type="text"
-              id="company"
-              v-model="user.company"
-            >
+            <input type="text" id="company" v-model="user.company" />
           </div>
           <div class="form-group">
             <label for="position">Должность</label>
-            <input
-              type="text"
-              id="position"
-              v-model="user.position"
-            >
+            <input type="text" id="position" v-model="user.position" />
           </div>
         </div>
       </div>

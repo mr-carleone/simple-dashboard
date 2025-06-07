@@ -3,11 +3,7 @@
     <div class="groups-filters">
       <div class="search-box">
         <i class="fas fa-search"></i>
-        <input
-          type="text"
-          v-model="searchQuery"
-          placeholder="Поиск групп..."
-        >
+        <input type="text" v-model="searchQuery" placeholder="Поиск групп..." />
       </div>
       <div class="filters">
         <select v-model="statusFilter">
@@ -94,8 +90,9 @@ export default {
   computed: {
     filteredGroups() {
       return this.groups.filter(group => {
-        const matchesSearch = group.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-                            group.description.toLowerCase().includes(this.searchQuery.toLowerCase())
+        const matchesSearch =
+          group.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          group.description.toLowerCase().includes(this.searchQuery.toLowerCase())
         const matchesStatus = !this.statusFilter || group.status === this.statusFilter
         return matchesSearch && matchesStatus
       })
@@ -186,7 +183,8 @@ export default {
     width: 100%;
     border-collapse: collapse;
 
-    th, td {
+    th,
+    td {
       padding: 1rem;
       text-align: left;
       border-bottom: 1px solid var(--border-color);

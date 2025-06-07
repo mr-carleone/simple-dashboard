@@ -3,7 +3,7 @@
     <div class="team-members">
       <div class="member-card" v-for="member in teamMembers" :key="member.id">
         <div class="member-info">
-          <img :src="member.avatar" :alt="member.name" class="avatar">
+          <img :src="member.avatar" :alt="member.name" class="avatar" />
           <div class="member-details">
             <h3>{{ member.name }}</h3>
             <span class="role">{{ member.role }}</span>
@@ -49,7 +49,7 @@
                   {{ task.dueDate }}
                 </span>
                 <span class="assignee">
-                  <img :src="task.assignee.avatar" :alt="task.assignee.name" class="avatar-small">
+                  <img :src="task.assignee.avatar" :alt="task.assignee.name" class="avatar-small" />
                   {{ task.assignee.name }}
                 </span>
               </div>
@@ -158,9 +158,9 @@ export default {
     },
     getPriorityText(priority) {
       const priorityMap = {
-        'high': 'Высокий',
-        'medium': 'Средний',
-        'low': 'Низкий'
+        high: 'Высокий',
+        medium: 'Средний',
+        low: 'Низкий'
       }
       return priorityMap[priority] || priority
     },
