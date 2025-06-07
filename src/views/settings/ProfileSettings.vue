@@ -25,17 +25,26 @@
 
         <div class="setting-item">
           <label for="name">Имя</label>
-          <input type="text" id="name" v-model="profile.name" placeholder="Введите ваше имя" />
+          <input type="text"
+id="name"
+v-model="profile.name"
+placeholder="Введите ваше имя" />
         </div>
 
         <div class="setting-item">
           <label for="email">Email</label>
-          <input type="email" id="email" v-model="profile.email" placeholder="Введите ваш email" />
+          <input type="email"
+id="email"
+v-model="profile.email"
+placeholder="Введите ваш email" />
         </div>
 
         <div class="setting-item">
           <label for="phone">Телефон</label>
-          <input type="tel" id="phone" v-model="profile.phone" placeholder="Введите ваш телефон" />
+          <input type="tel"
+id="phone"
+v-model="profile.phone"
+placeholder="Введите ваш телефон" />
         </div>
       </div>
     </div>
@@ -45,17 +54,26 @@
       <div class="settings-grid">
         <div class="setting-item">
           <label for="company">Компания</label>
-          <input type="text" id="company" v-model="profile.company" placeholder="Введите название компании" />
+          <input type="text"
+id="company"
+v-model="profile.company"
+placeholder="Введите название компании" />
         </div>
 
         <div class="setting-item">
           <label for="position">Должность</label>
-          <input type="text" id="position" v-model="profile.position" placeholder="Введите вашу должность" />
+          <input type="text"
+id="position"
+v-model="profile.position"
+placeholder="Введите вашу должность" />
         </div>
 
         <div class="setting-item">
           <label for="bio">О себе</label>
-          <textarea id="bio" v-model="profile.bio" placeholder="Расскажите о себе" rows="4"></textarea>
+          <textarea id="bio"
+v-model="profile.bio"
+placeholder="Расскажите о себе"
+rows="4"></textarea>
         </div>
       </div>
     </div>

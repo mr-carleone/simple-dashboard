@@ -13,7 +13,10 @@
         <!-- Изменено: раздельная обработка для пунктов с детьми и без -->
         <div class="menu-item__header" @click="handleItemClick(index, item)">
           <span class="menu-item__title">
-            <font-awesome-icon v-if="item.icon" :icon="item.icon" class="menu-item__icon" fixed-width />
+            <font-awesome-icon v-if="item.icon"
+:icon="item.icon"
+class="menu-item__icon"
+fixed-width />
             <span v-show="!mainStore.isSidebarCollapsed" class="menu-item__text">{{ item.title }}</span>
           </span>
           <font-awesome-icon
@@ -34,7 +37,10 @@
               :class="{ 'submenu-item--active': isActive }"
               @click="closeOtherSubmenus(index)"
             >
-              <font-awesome-icon v-if="subItem.icon" :icon="subItem.icon" class="submenu-item__icon" fixed-width />
+              <font-awesome-icon v-if="subItem.icon"
+:icon="subItem.icon"
+class="submenu-item__icon"
+fixed-width />
               <span class="submenu-item__text">{{ subItem.title }}</span>
             </router-link>
           </div>

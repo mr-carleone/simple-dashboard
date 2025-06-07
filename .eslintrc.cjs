@@ -11,6 +11,19 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 'latest'
   },
+  env: {
+    jest: true,
+    node: true
+  },
+  globals: {
+    describe: 'readonly',
+    it: 'readonly',
+    expect: 'readonly',
+    beforeEach: 'readonly',
+    afterEach: 'readonly',
+    beforeAll: 'readonly',
+    afterAll: 'readonly'
+  },
   rules: {
     'vue/multi-word-component-names': 'off',
     'vue/no-v-html': 'off',
