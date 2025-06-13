@@ -8,10 +8,6 @@
                         <font-awesome-icon :icon="['fas', 'industry']" />
                         Заводы
                     </el-menu-item>
-                    <el-menu-item index="/sova/users">
-                        <font-awesome-icon :icon="['fas', 'users']" />
-                        Пользователи
-                    </el-menu-item>
                 </el-menu>
             </div>
         </el-card>

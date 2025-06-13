@@ -1,93 +1,103 @@
-from typing import List, Dict, Any
+from typing import List, Dict, Sequence
+import hashlib # Импортируем hashlib для MD5 хеширования
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from sqlalchemy.exc import IntegrityError
 from app.db.session import get_db
 from app.models.user import User
-from app.schemas.user import User as UserSchema
-from app.schemas.user import UserCreate, UserUpdate
+from app.schemas.user import User as UserSchema, UserCreate, UserUpdate, UserInDB
+from app.core.auth import get_current_user
+from app.api.v1.endpoints.auth import get_password_hash
 
 router = APIRouter()
 
-@router.get("/", response_model=List[UserSchema])
+@router.get("/me", response_model=UserSchema)
+async def get_current_user_info(
+    current_user: User = Depends(get_current_user)
+) -> User:
+    """Получить информацию о текущем пользователе"""
+    return current_user
+
+@router.get("/", response_model=List[UserInDB])
 async def get_users(
     db: AsyncSession = Depends(get_db),
     skip: int = 0,
     limit: int = 100
-) -> List[User]:
+) -> Sequence[User]:
     """Получить список пользователей"""
-    result = await db.execute(select(User).offset(skip).limit(limit))
-    users = result.scalars().all()
-    return users
+    query = select(User).offset(skip).limit(limit)
+    result = await db.execute(query)
+    return result.scalars().all()
 
-@router.get("/{user_id}", response_model=UserSchema)
+@router.get("/{user_id}", response_model=UserInDB)
 async def get_user(
     user_id: int,
     db: AsyncSession = Depends(get_db)
 ) -> User:
     """Получить пользователя по ID"""
-    result = await db.execute(select(User).where(User.id == user_id))
+    query = select(User).where(User.id == user_id)
+    result = await db.execute(query)
     user = result.scalar_one_or_none()
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return user
 
-@router.post("/", response_model=UserSchema)
-async def create_user(
-    user: UserCreate,
-    db: AsyncSession = Depends(get_db)
-) -> User:
+@router.post("/", response_model=UserInDB)
+async def create_user(user_in: UserCreate, db: AsyncSession = Depends(get_db)):
     """Создать нового пользователя"""
-    # Проверяем, существует ли пользователь с таким email
-    result = await db.execute(select(User).where(User.email == user.email))
-    if result.scalar_one_or_none():
-        raise HTTPException(
-            status_code=400,
-            detail="User with this email already exists"
-        )
+    db_user_check = await db.execute(select(User).where(User.email == user_in.email))
+    if db_user_check.scalar_one_or_none():
+        raise HTTPException(status_code=400, detail="Email already registered")
 
-    # Проверяем, существует ли пользователь с таким username
-    result = await db.execute(select(User).where(User.username == user.username))
-    if result.scalar_one_or_none():
-        raise HTTPException(
-            status_code=400,
-            detail="User with this username already exists"
-        )
+    hashed_password = get_password_hash(user_in.password)
 
-    try:
-        db_user = User(
-            email=user.email,
-            username=user.username,
-            hashed_password="hashed_" + user.password,  # TODO: Add proper password hashing
-            is_active=True
-        )
-        db.add(db_user)
-        await db.commit()
-        await db.refresh(db_user)
-        return db_user
-    except IntegrityError:
-        await db.rollback()
-        raise HTTPException(
-            status_code=400,
-            detail="User creation failed"
-        )
+    # Генерируем URL Gravatar, если avatar_url не предоставлен
+    avatar_url = user_in.avatar_url
+    if not avatar_url:
+        # Gravatar использует MD5 хеш email, обрезанный и в нижнем регистре
+        email_hash = hashlib.md5(user_in.email.strip().lower().encode('utf-8')).hexdigest()
+        avatar_url = f"https://www.gravatar.com/avatar/{email_hash}?d=identicon&s=128"
 
-@router.put("/{user_id}", response_model=UserSchema)
+    db_user = User(
+        email=user_in.email,
+        username=user_in.username,
+        hashed_password=hashed_password,
+        is_active=user_in.is_active if user_in.is_active is not None else True, # Убеждаемся, что is_active корректно устанавливается
+        role=user_in.role,
+        avatar_url=avatar_url # Сохраняем сгенерированный или предоставленный аватар
+    )
+    db.add(db_user)
+    await db.commit()
+    await db.refresh(db_user)
+    return db_user
+
+@router.put("/{user_id}", response_model=UserInDB)
 async def update_user(
     user_id: int,
-    user: UserUpdate,
+    user_in: UserUpdate,
     db: AsyncSession = Depends(get_db)
 ) -> User:
     """Обновить пользователя"""
-    result = await db.execute(select(User).where(User.id == user_id))
+    query = select(User).where(User.id == user_id)
+    result = await db.execute(query)
     db_user = result.scalar_one_or_none()
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
 
-    update_data = user.model_dump(exclude_unset=True)
+    update_data = user_in.model_dump(exclude_unset=True)
     if "password" in update_data:
-        update_data["hashed_password"] = "hashed_" + update_data.pop("password")
+        update_data["hashed_password"] = get_password_hash(update_data.pop("password"))
+
+    # Обработка avatar_url при обновлении
+    if "avatar_url" in update_data:
+        if update_data["avatar_url"] == "":
+            # Если пользователь явно отправил пустую строку, установить None (очистить аватар)
+            update_data["avatar_url"] = None
+    elif db_user.avatar_url is None and db_user.email is not None: # type: ignore # Проверяем значение email
+        # Если avatar_url не был предоставлен в update_data И нет аватара в БД,
+        # И у пользователя есть email, тогда генерируем аватар по умолчанию.
+        email_hash = hashlib.md5(db_user.email.strip().lower().encode('utf-8')).hexdigest()
+        update_data["avatar_url"] = f"https://www.gravatar.com/avatar/{email_hash}?d=identicon&s=128"
 
     for key, value in update_data.items():
         setattr(db_user, key, value)
@@ -102,7 +112,8 @@ async def delete_user(
     db: AsyncSession = Depends(get_db)
 ) -> Dict[str, str]:
     """Удалить пользователя"""
-    result = await db.execute(select(User).where(User.id == user_id))
+    query = select(User).where(User.id == user_id)
+    result = await db.execute(query)
     db_user = result.scalar_one_or_none()
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")

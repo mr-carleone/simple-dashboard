@@ -23,11 +23,13 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useMainStore } from '@/store' // Импортируем наш Pinia store
 
 const router = useRouter()
 const email = ref('')
 const password = ref('')
 const error = ref('')
+const mainStore = useMainStore() // Получаем экземпляр store
 
 // Получаем значения из .env
 const ENV_LOGIN = import.meta.env.VITE_USER_LOGIN
@@ -37,18 +39,71 @@ const ENV_PASSWORD = import.meta.env.VITE_USER_PASSWORD
 console.log('ENV_LOGIN:', ENV_LOGIN)
 console.log('ENV_PASSWORD:', ENV_PASSWORD)
 
-function handleLogin() {
-  console.log('Attempting login with:', {
-    email: email.value,
-    password: password.value
-  })
-  console.log('Comparing with:', { ENV_LOGIN, ENV_PASSWORD })
+async function handleLogin() {
+  error.value = ''
+  let loggedIn = false; // Флаг для отслеживания успешного входа любым методом
 
-  if (email.value === ENV_LOGIN && password.value === ENV_PASSWORD) {
-    localStorage.setItem('token', 'demo-token')
+  try {
+    // 1. Сначала пробуем войти через API
+    const apiResponse = await fetch('/api/v1/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: email.value.trim(), // Обрезаем пробелы
+        password: password.value.trim(), // Обрезаем пробелы
+      }),
+    })
+
+    console.log('API Response Status:', apiResponse.status);
+    console.log('API Response OK:', apiResponse.ok);
+
+    if (apiResponse.ok) {
+      const data = await apiResponse.json()
+      localStorage.setItem('token', data.access_token)
+      // Обновляем состояние пользователя в store после успешного API входа
+      await mainStore.fetchCurrentUser();
+      router.push({ name: 'Home' })
+      loggedIn = true
+      return
+    } else {
+      // Вход через API не удался (например, 401)
+      console.log('Вход через API не удался. Статус:', apiResponse.status);
+      // Продолжаем попытку через переменные окружения
+    }
+
+  } catch (apiError) {
+    // Эта секция catch для сетевых ошибок или других ошибок, которые
+    // не позволяют fetch вернуть ответ.
+    console.error('Сетевая или непредвиденная ошибка API при входе:', apiError);
+    // Продолжаем попытку через переменные окружения
+  }
+
+  // 2. Если API вход не удался или произошла сетевая ошибка, проверяем переменные окружения
+  console.log('Попытка входа через переменные окружения...');
+  console.log('Совпадение Email:', email.value.trim() === ENV_LOGIN);
+  console.log('Совпадение Пароля:', password.value.trim() === ENV_PASSWORD);
+
+  if (email.value.trim() === ENV_LOGIN && password.value.trim() === ENV_PASSWORD) {
+    localStorage.setItem('token', 'admin-token')
+    // Явно обновляем состояние пользователя в store для локального админа
+    mainStore.user = {
+      email: ENV_LOGIN,
+      username: 'Локальный Администратор',
+      role: 'admin',
+      is_active: true,
+    }
+    console.log("Вход выполнен как локальный администратор (через ENV).")
     router.push({ name: 'Home' })
-  } else {
+    loggedIn = true
+    return
+  }
+
+  // 3. Если ни один из способов не сработал
+  if (!loggedIn) {
     error.value = 'Неверный логин или пароль'
+    console.log('Вход не удался: Неверные учетные данные.');
   }
 }
 </script>
@@ -129,11 +184,19 @@ input:focus {
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .login-button:hover {
   background: var(--primary-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.login-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .error-message {

@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   backend:
     build:
@@ -8,23 +10,16 @@ services:
     volumes:
       - ./backend:/app
     environment:
-      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/simple_dashboard
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/sova
+      - POSTGRES_SERVER=db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=sova
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - sova-network
-
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    depends_on:
-      - backend
 
   db:
     image: postgres:15
@@ -33,9 +28,14 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=simple_dashboard
+      - POSTGRES_DB=sova
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     networks:
       - sova-network
 
@@ -47,11 +47,17 @@ services:
       - ./backend/config/.env.dev
     depends_on:
       - db
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
     networks:
       - sova-network
 
 volumes:
   postgres_data:
+  pgadmin_data:
 
 
 networks:

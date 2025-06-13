@@ -25,12 +25,19 @@
               :type="showNewPassword ? 'text' : 'password'"
               id="newPassword"
               v-model="passwords.new"
+              @input="validateNewPassword"
               placeholder="Введите новый пароль"
             />
             <button class="toggle-password" @click="showNewPassword = !showNewPassword">
               <i :class="showNewPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
             </button>
           </div>
+          <ul v-if="passwords.new.length > 0 || passwordErrors.length > 0" class="password-hints">
+            <li :class="{ 'valid': isNewPasswordLongEnough, 'invalid': !isNewPasswordLongEnough }">Не менее 8 символов</li>
+            <li :class="{ 'valid': isNewPasswordEnglishOnly, 'invalid': !isNewPasswordEnglishOnly }">Только английские буквы</li>
+            <li :class="{ 'valid': hasNewPasswordUppercase, 'invalid': !hasNewPasswordUppercase }">Хотя бы одна заглавная буква</li>
+            <li :class="{ 'valid': hasNewPasswordEnoughSpecialChars, 'invalid': !hasNewPasswordEnoughSpecialChars }">Хотя бы два спецсимвола (!@#$%^&*)</li>
+          </ul>
         </div>
 
         <div class="setting-item">
@@ -46,7 +53,14 @@
               <i :class="showConfirmPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
             </button>
           </div>
+          <p v-if="passwords.confirm.length > 0 && passwords.new !== passwords.confirm" class="text-danger">Пароли не совпадают</p>
         </div>
+      </div>
+      <div class="settings-actions mt-4">
+        <button class="btn btn-primary" @click="changePassword">
+          <i class="fas fa-key"></i>
+          Сменить пароль
+        </button>
       </div>
     </div>
 
@@ -102,8 +116,15 @@
 </template>
 
 <script>
+import { useProfileStore } from '@/store/profile'
+import { computed } from 'vue'
+
 export default {
   name: 'SecuritySettings',
+  setup() {
+    const profileStore = useProfileStore()
+    return { profileStore }
+  },
   data() {
     return {
       passwords: {
@@ -143,7 +164,24 @@ export default {
           current: false
         }
       ],
-      defaultSecurity: null
+      defaultSecurity: null,
+      passwordErrors: []
+    }
+  },
+  computed: {
+    isNewPasswordLongEnough() {
+      return this.passwords.new.length >= 8
+    },
+    isNewPasswordEnglishOnly() {
+      // Sadece İngilizce harfler, rakamlar ve izin verilen özel karakterler
+      return /^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};:\'\"\\\\|,.<>\/?~\u0060]*$/.test(this.passwords.new)
+    },
+    hasNewPasswordUppercase() {
+      return /[A-Z]/.test(this.passwords.new)
+    },
+    hasNewPasswordEnoughSpecialChars() {
+      const specialCharCount = (this.passwords.new.match(/[!@#$%^&*()_+\-=\[\]{};:\'\"\\\\|,.<>\/?~\u0060]/g) || []).length
+      return specialCharCount >= 2
     }
   },
   created() {
@@ -169,6 +207,66 @@ export default {
     terminateSession(session) {
       // Здесь будет логика завершения сессии
       console.log('Terminating session:', session)
+    },
+    validateNewPassword() {
+      this.passwordErrors = []
+      const newPass = this.passwords.new
+
+      // Kuralları kontrol etmek için hesaplanmış özellikleri kullan
+      if (!this.isNewPasswordLongEnough) {
+        this.passwordErrors.push('Пароль должен содержать не менее 8 символов')
+      }
+
+      if (!this.isNewPasswordEnglishOnly) {
+        this.passwordErrors.push('Пароль должен содержать только английские буквы, цифры и допустимые спецсимволы')
+      }
+
+      if (!this.hasNewPasswordUppercase) {
+        this.passwordErrors.push('Пароль должен содержать хотя бы одну заглавную букву')
+      }
+
+      if (!this.hasNewPasswordEnoughSpecialChars) {
+        this.passwordErrors.push('Пароль должен содержать хотя бы два специальных символа')
+      }
+    },
+    async changePassword() {
+      this.validateNewPassword() // Запускаем валидацию перед отправкой
+
+      if (this.passwordErrors.length > 0) {
+        this.$message.error('Пожалуйста, исправьте ошибки в новом пароле.')
+        return
+      }
+
+      if (this.passwords.new !== this.passwords.confirm) {
+        this.$message.error('Новый пароль и подтверждение не совпадают.')
+        return
+      }
+
+      if (!this.passwords.current) {
+        this.$message.error('Пожалуйста, введите текущий пароль.')
+        return
+      }
+
+      try {
+        const success = await this.profileStore.updatePassword(
+          this.passwords.current,
+          this.passwords.new
+        )
+
+        if (success) {
+          this.$message.success('Пароль успешно изменен!')
+          // Очищаем поля после успешной смены пароля
+          this.passwords.current = ''
+          this.passwords.new = ''
+          this.passwords.confirm = ''
+          this.passwordErrors = []
+        } else {
+          this.$message.error('Ошибка при смене пароля. Возможно, текущий пароль неверен или произошла ошибка на сервере.')
+        }
+      } catch (error) {
+        console.error('Ошибка при смене пароля:', error)
+        this.$message.error('Произошла непредвиденная ошибка при смене пароля.')
+      }
     }
   }
 }
@@ -205,15 +303,14 @@ export default {
     font-size: 0.875rem;
     color: var(--text-secondary);
   }
-}
 
-.password-input {
-  position: relative;
-
-  input {
+  input[type='text'],
+  input[type='email'],
+  input[type='tel'],
+  input[type='password'],
+  textarea {
     width: 100%;
     padding: 0.75rem;
-    padding-right: 2.5rem;
     border: 1px solid var(--border-color);
     border-radius: 0.5rem;
     background-color: var(--input-bg);
@@ -226,6 +323,15 @@ export default {
     }
   }
 
+  .password-input {
+    position: relative;
+    width: 100%;
+  }
+
+  .password-input input {
+    padding-right: 2.5rem; /* Make space for the toggle button */
+  }
+
   .toggle-password {
     position: absolute;
     right: 0.75rem;
@@ -235,88 +341,146 @@ export default {
     border: none;
     color: var(--text-secondary);
     cursor: pointer;
-    padding: 0.25rem;
+    font-size: 1rem;
+    padding: 0;
+  }
 
-    &:hover {
-      color: var(--primary-color);
+  textarea {
+    resize: vertical;
+  }
+
+  .password-hints {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 0;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+
+    li {
+      margin-bottom: 0.25rem;
+
+      &.valid {
+        color: var(--success-color);
+      }
+      &.invalid {
+        color: var(--danger-color);
+      }
+    }
+  }
+
+  .text-danger {
+    color: var(--danger-color);
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+  }
+}
+
+.avatar-upload {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  position: relative;
+  transition: all 0.3s ease;
+
+  &.dragging {
+    .avatar-preview {
+      border-color: var(--primary-color);
+      transform: scale(1.05);
     }
   }
 }
 
-.checkbox-label {
+.avatar-preview {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: var(--input-bg);
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  cursor: pointer;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  border: 2px dashed var(--border-color);
+  transition: all 0.3s ease;
 
-  input[type='checkbox'] {
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
-}
-
-.setting-description {
-  margin: 0.5rem 0 0;
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-}
-
-.sessions-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.session-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-  background-color: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 0.5rem;
-}
-
-.session-info {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
 
   i {
-    font-size: 1.5rem;
+    font-size: 2.5rem;
     color: var(--text-secondary);
   }
 }
 
-.session-details {
+.drop-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  gap: 0.5rem;
+
+  i {
+    font-size: 2rem;
+    color: white;
+  }
+
+  span {
+    font-size: 0.875rem;
+  }
 }
 
-.session-device {
-  font-weight: 500;
-  color: var(--text-primary);
+.hidden {
+  display: none;
 }
 
-.session-location,
-.session-time {
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-}
-
-.current-session {
-  font-size: 0.875rem;
-  color: var(--success-color);
-  font-weight: 500;
+.avatar-actions {
+  display: flex;
+  gap: 0.5rem;
 }
 
 .settings-actions {
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
-  margin-top: 1rem;
+  margin-top: 1.5rem;
+
+  .btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+
+    &.btn-outline {
+      background-color: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+
+      &:hover {
+        background-color: var(--bg-secondary);
+      }
+    }
+
+    &.btn-primary {
+      background-color: var(--primary-color);
+      border: 1px solid var(--primary-color);
+      color: #fff;
+
+      &:hover {
+        opacity: 0.9;
+      }
+    }
+  }
 }
 
 @media (max-width: 768px) {
@@ -324,10 +488,97 @@ export default {
     grid-template-columns: 1fr;
   }
 
-  .session-item {
+  .avatar-upload {
     flex-direction: column;
     align-items: flex-start;
-    gap: 1rem;
   }
+
+  .settings-actions {
+    flex-direction: column;
+  }
+
+  .session-item {
+    flex-direction: column; /* Элементы сессии располагаются вертикально */
+    align-items: flex-start; /* Выравнивание элементов по левому краю */
+    justify-content: flex-start; /* Выравнивание контента по верху */
+    gap: 0.5rem; /* Вертикальный отступ между элементами */
+    box-sizing: border-box; /* Учитываем padding и border в общей ширине */
+    padding: 1rem; /* Сохраняем внутренние отступы */
+    width: 100%; /* Элемент занимает всю доступную ширину */
+
+    .session-info {
+      display: flex; /* Делаем flex-контейнером */
+      flex-direction: column; /* Иконка и детали располагаются вертикально */
+      align-items: flex-start; /* Выравнивание иконки и деталей по левому краю */
+      width: 100%; /* Занимает всю доступную ширину */
+      margin-bottom: 0; /* Сброс нижнего отступа */
+      box-sizing: border-box; /* Учитываем padding и border */
+
+      .session-details {
+        width: 100%; /* Детали занимают всю доступную ширину */
+        box-sizing: border-box; /* Учитываем padding и border */
+        span {
+          display: block; /* Каждый span на новой строке */
+          width: 100%; /* Занимает всю доступную ширину */
+          overflow-wrap: break-word; /* Разрешаем перенос длинных слов */
+          text-align: left; /* Выравнивание текста по левому краю */
+        }
+      }
+    }
+
+    .btn, .current-session {
+      width: 100%; /* Кнопки/спаны занимают всю ширину */
+      margin-left: 0; /* Убираем левый отступ */
+      text-align: center; /* Центрируем текст кнопок */
+      box-sizing: border-box; /* Учитываем padding и border */
+    }
+  }
+}
+
+.session-details {
+  display: flex;
+  flex-direction: column;
+  flex: 1; /* Allow it to grow and shrink */
+  min-width: 0; /* Important for flex items with long content */
+
+  span {
+    overflow-wrap: break-word; /* Allow long words to break */
+  }
+}
+
+.sessions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.session-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  background-color: var(--input-bg);
+
+  // .btn {
+  //   flex-shrink: 0;
+  //   margin-left: 1rem;
+  // }
+}
+
+.session-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.current-session {
+  padding: 0.75rem 1.5rem; /* Match button padding */
+  border-radius: 0.5rem; /* Match button border-radius */
+  background-color: var(--success-color); /* Give it a subtle background */
+  color: #fff; /* Ensure text color is readable */
+  text-align: center; /* Center the text */
+  flex-shrink: 0; /* Prevent it from shrinking */
 }
 </style>

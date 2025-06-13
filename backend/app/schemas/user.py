@@ -1,22 +1,26 @@
 from typing import Optional
 from datetime import datetime
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr
 
 class UserBase(BaseModel):
     """Базовая схема пользователя"""
     email: EmailStr
-    username: str = Field(..., min_length=3, max_length=50)
-    is_active: bool = True
+    username: str
+    role: str = "user"
+    avatar_url: Optional[str] = None
+    is_active: Optional[bool] = True
 
 class UserCreate(UserBase):
     """Схема для создания пользователя"""
-    password: str = Field(..., min_length=6)
+    password: str
 
 class UserUpdate(BaseModel):
     """Схема для обновления пользователя"""
     email: Optional[EmailStr] = None
-    username: Optional[str] = Field(None, min_length=3, max_length=50)
-    password: Optional[str] = Field(None, min_length=6)
+    username: Optional[str] = None
+    password: Optional[str] = None
+    role: Optional[str] = None
+    avatar_url: Optional[str] = None
     is_active: Optional[bool] = None
 
 class User(UserBase):
@@ -29,4 +33,9 @@ class User(UserBase):
         from_attributes = True
 
 class UserInDB(UserBase):
-    hashed_password: str
+    id: int
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True

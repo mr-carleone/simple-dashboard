@@ -9,11 +9,17 @@
 
 <script>
 import Sidebar from '@/components/Sidebar.vue'
+import { useSettingsStore } from '@/store/settings'
 
 export default {
   name: 'App',
   components: {
     Sidebar
+  },
+  async created() {
+    const settingsStore = useSettingsStore()
+    await settingsStore.loadSettings()
+    settingsStore.applySettings()
   },
   computed: {
     showSidebar() {

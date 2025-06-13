@@ -7,11 +7,21 @@
       </div>
     </div>
 
-    <div class="user-info" v-if="!isCollapsed">
-      <img :src="user.avatar" :alt="user.name" class="user-avatar" />
+    <div class="user-info" v-if="store.user">
+      <img :src="store.user.avatar_url" alt="User Avatar" class="avatar" />
       <div class="user-details">
-        <span class="user-name">{{ user.name }}</span>
-        <span class="user-role">{{ user.role }}</span>
+        <h3>{{ store.user.username }}</h3>
+        <p>{{ store.user.email }}</p>
+      </div>
+    </div>
+    <div v-else-if="store.loading" class="loading">
+      Загрузка...
+    </div>
+    <div v-else class="user-info">
+      <img src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" alt="Default Avatar" class="avatar" />
+      <div class="user-details">
+        <h3>Гость</h3>
+        <p>Пожалуйста, войдите</p>
       </div>
     </div>
 
@@ -21,14 +31,14 @@
         <span v-if="!isCollapsed">Главная</span>
       </router-link>
 
+      <router-link to="/profile" class="nav-item" active-class="active">
+        <i class="fas fa-user"></i>
+        <span v-if="!isCollapsed">Профиль</span>
+      </router-link>
+
       <router-link to="/users" class="nav-item" active-class="active">
         <i class="fas fa-users"></i>
         <span v-if="!isCollapsed">Пользователи</span>
-      </router-link>
-
-      <router-link to="/groups" class="nav-item" active-class="active">
-        <i class="fas fa-user-friends"></i>
-        <span v-if="!isCollapsed">Группы</span>
       </router-link>
 
       <router-link to="/sova/factories" class="nav-item" active-class="active">
@@ -36,46 +46,11 @@
         <span v-if="!isCollapsed">Заводы</span>
       </router-link>
 
-      <div class="nav-group" :class="{ 'is-open': isTasksOpen }">
-        <div class="nav-item" @click="handleTasksClick">
-          <i class="fas fa-tasks"></i>
-          <span v-if="!isCollapsed">Задачи</span>
-          <i v-if="!isCollapsed" class="fas fa-chevron-down" :class="{ 'is-open': isTasksOpen }"></i>
-        </div>
-        <div class="nav-subitems" v-if="!isCollapsed && isTasksOpen">
-          <router-link to="/tasks/my" class="nav-subitem" active-class="active">
-            <i class="fas fa-user-check"></i>
-            <span>Мои задачи</span>
-          </router-link>
-          <router-link to="/tasks/team" class="nav-subitem" active-class="active">
-            <i class="fas fa-users-cog"></i>
-            <span>Задачи команды</span>
-          </router-link>
-          <router-link to="/tasks/project" class="nav-subitem" active-class="active">
-            <i class="fas fa-project-diagram"></i>
-            <span>Проектные задачи</span>
-          </router-link>
-          <router-link to="/tasks/calendar" class="nav-subitem" active-class="active">
-            <i class="fas fa-calendar-alt"></i>
-            <span>Календарь задач</span>
-          </router-link>
-        </div>
-      </div>
-
-      <router-link to="/profile" class="nav-item" active-class="active">
-        <i class="fas fa-user"></i>
-        <span v-if="!isCollapsed">Профиль</span>
-      </router-link>
-
       <router-link to="/settings" class="nav-item" active-class="active">
         <i class="fas fa-cog"></i>
         <span v-if="!isCollapsed">Настройки</span>
       </router-link>
 
-      <router-link to="/about" class="nav-item" active-class="active">
-        <i class="fas fa-info-circle"></i>
-        <span v-if="!isCollapsed">О нас</span>
-      </router-link>
     </nav>
 
     <div class="sidebar-footer">
@@ -93,68 +68,45 @@
   </aside>
 </template>
 
-<script>
+<script setup>
+import { onMounted, ref } from 'vue'
+import { useMainStore } from '@/store'
 import ThemeToggle from './ThemeToggle.vue'
 
-export default {
-  name: 'Sidebar',
-  components: {
-    ThemeToggle
-  },
-  data() {
-    return {
-      isCollapsed: false,
-      isTasksOpen: false,
-      isSovaOpen: false,
-      user: {
-        name: 'Иван Иванов',
-        role: 'Администратор',
-        avatar: 'https://i.pravatar.cc/150?img=1'
-      }
-    }
-  },
-  watch: {
-    $route: {
-      handler(to) {
-        // Если маршрут начинается с /tasks и сайдбар свернут, разворачиваем его
-        if (to.path.startsWith('/tasks') && this.isCollapsed) {
-          this.isCollapsed = false
-          this.isTasksOpen = true
-        }
-        // Если маршрут начинается с /sova и сайдбар свернут, разворачиваем его
-        if (to.path.startsWith('/sova') && this.isCollapsed) {
-          this.isCollapsed = false
-          this.isSovaOpen = true
-        }
-      },
-      immediate: true
-    }
-  },
-  methods: {
-    toggleSidebar() {
-      this.isCollapsed = !this.isCollapsed
-    },
-    handleTasksClick() {
-      if (this.isCollapsed) {
-        this.isCollapsed = false
-        this.isTasksOpen = true
-      } else {
-        this.isTasksOpen = !this.isTasksOpen
-      }
-    },
-    handleSovaClick() {
-      if (this.isCollapsed) {
-        this.isCollapsed = false
-        this.isSovaOpen = true
-      } else {
-        this.isSovaOpen = !this.isSovaOpen
-      }
-    },
-    logout() {
-      localStorage.removeItem('token')
-      this.$router.push('/login')
-    }
+const store = useMainStore()
+
+onMounted(async () => {
+  await store.fetchCurrentUser()
+})
+
+const isCollapsed = ref(false)
+const isTasksOpen = ref(false)
+const isSovaOpen = ref(false)
+
+const toggleSidebar = () => {
+  isCollapsed.value = !isCollapsed.value
+}
+
+const handleTasksClick = () => {
+  if (isCollapsed.value) {
+    isCollapsed.value = false
+    isTasksOpen.value = true
+  } else {
+    isTasksOpen.value = !isTasksOpen.value
   }
+}
+
+const handleSovaClick = () => {
+  if (isCollapsed.value) {
+    isCollapsed.value = false
+    isSovaOpen.value = true
+  } else {
+    isSovaOpen.value = !isSovaOpen.value
+  }
+}
+
+const logout = () => {
+  store.logout()
 }
 </script>
 
@@ -217,11 +169,12 @@ export default {
   border-bottom: 1px solid var(--border-color);
   background-color: var(--bg-tertiary);
 
-  .user-avatar {
+  .avatar {
     width: 40px;
     height: 40px;
     border-radius: 50%;
     object-fit: cover;
+    border: 1px solid var(--border-color);
   }
 
   .user-details {
@@ -230,12 +183,12 @@ export default {
     gap: 0.25rem;
   }
 
-  .user-name {
+  .user-details h3 {
     font-weight: 600;
     color: var(--text-color);
   }
 
-  .user-role {
+  .user-details p {
     font-size: 0.875rem;
     color: var(--text-secondary);
   }
@@ -381,6 +334,12 @@ export default {
     color: var(--primary-color);
     background-color: var(--bg-secondary);
   }
+}
+
+.loading {
+  padding: 10px;
+  text-align: center;
+  color: #888;
 }
 
 @media (max-width: 768px) {

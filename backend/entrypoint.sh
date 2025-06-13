@@ -1,6 +1,6 @@
 #!/bin/bash
 
-until PGPASSWORD=$POSTGRES_PASSWORD psql -h "db" -U "postgres" -d "sova" -c "\q"; do
+until PGPASSWORD=postgres psql -h "db" -U "postgres" -d "sova" -c "\q"; do
     echo "Postgres is unavailable - sleeping"
     sleep 1
 done

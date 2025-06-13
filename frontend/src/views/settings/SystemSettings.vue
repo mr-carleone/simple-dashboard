@@ -89,42 +89,50 @@
 </template>
 
 <script>
+import { useSettingsStore } from '@/store/settings'
+
 export default {
   name: 'SystemSettings',
+  setup() {
+    const settingsStore = useSettingsStore()
+    return { settingsStore }
+  },
   data() {
     return {
-      settings: {
-        systemName: 'Dashboard',
-        language: 'ru',
-        timezone: 'UTC+3',
-        theme: 'light',
-        primaryColor: '#3498db',
-        notifications: {
-          email: true,
-          browser: false
-        }
-      },
       colors: [
         { value: '#3498db', name: 'Blue' },
         { value: '#2ecc71', name: 'Green' },
         { value: '#e74c3c', name: 'Red' },
         { value: '#f1c40f', name: 'Yellow' },
         { value: '#9b59b6', name: 'Purple' }
-      ],
-      defaultSettings: null
+      ]
     }
   },
-  created() {
-    // Сохраняем начальные настройки для возможности сброса
-    this.defaultSettings = JSON.parse(JSON.stringify(this.settings))
+  computed: {
+    settings: {
+      get() {
+        return this.settingsStore.settings
+      },
+      set(value) {
+        this.settingsStore.settings = value
+      }
+    }
+  },
+  async created() {
+    await this.settingsStore.loadSettings()
   },
   methods: {
-    saveSettings() {
-      // Здесь будет логика сохранения настроек
-      console.log('Saving settings:', this.settings)
+    async saveSettings() {
+      const success = await this.settingsStore.saveSettings(this.settings)
+      if (success) {
+        this.$message.success('Настройки успешно сохранены')
+      } else {
+        this.$message.error('Ошибка при сохранении настроек')
+      }
     },
     resetSettings() {
-      this.settings = JSON.parse(JSON.stringify(this.defaultSettings))
+      this.settingsStore.resetSettings()
+      this.$message.success('Настройки сброшены')
     }
   }
 }

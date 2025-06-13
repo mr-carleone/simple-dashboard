@@ -1,17 +1,16 @@
-from datetime import datetime
-from typing import Optional
-from sqlalchemy import Column, Integer, String, Boolean, DateTime
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, func
 from sqlalchemy.sql import func
 from app.db.base import Base
 
 class User(Base):
-    """Модель пользователя"""
     __tablename__ = "users"
 
-    id: int = Column(Integer, primary_key=True, index=True)
-    email: str = Column(String, unique=True, index=True)
-    username: str = Column(String, unique=True, index=True)
-    hashed_password: str = Column(String)
-    is_active: bool = Column(Boolean, default=True)
-    created_at: datetime = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at: Optional[datetime] = Column(DateTime(timezone=True), onupdate=func.now())
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String, unique=True, index=True, nullable=False)
+    username = Column(String, unique=True, index=True, nullable=False)
+    hashed_password = Column(String, nullable=False)
+    is_active = Column(Boolean, default=True)
+    role = Column(String, nullable=False, default="user")
+    avatar_url = Column(String, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())

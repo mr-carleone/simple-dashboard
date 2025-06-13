@@ -1,35 +1,47 @@
 import axios from 'axios'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+const API_URL = 'http://localhost:8000/api/v1'
 
-export const usersApi = {
-    // Получить список всех пользователей
-    async getUsers() {
+export const createUser = async (userData) => {
+    try {
+        const response = await axios.post(`${API_URL}/users/`, {
+            email: userData.email,
+            username: userData.username,
+            password: userData.password,
+            is_active: true
+        })
+        return response.data
+    } catch (error) {
+        console.error('Error creating user:', error.response?.data || error.message)
+        throw error
+    }
+}
+
+export const getUsers = async () => {
+    try {
         const response = await axios.get(`${API_URL}/users/`)
         return response.data
-    },
+    } catch (error) {
+        console.error('Error fetching users:', error.response?.data || error.message)
+        throw error
+    }
+}
 
-    // Получить пользователя по ID
-    async getUserById(id) {
-        const response = await axios.get(`${API_URL}/users/${id}`)
-        return response.data
-    },
-
-    // Создать нового пользователя
-    async createUser(userData) {
-        const response = await axios.post(`${API_URL}/users/`, userData)
-        return response.data
-    },
-
-    // Обновить пользователя
-    async updateUser(userId, userData) {
+export const updateUser = async (userId, userData) => {
+    try {
         const response = await axios.put(`${API_URL}/users/${userId}`, userData)
         return response.data
-    },
+    } catch (error) {
+        console.error('Error updating user:', error.response?.data || error.message)
+        throw error
+    }
+}
 
-    // Удалить пользователя
-    async deleteUser(userId) {
-        const response = await axios.delete(`${API_URL}/users/${userId}`)
-        return response.data
+export const deleteUser = async (userId) => {
+    try {
+        await axios.delete(`${API_URL}/users/${userId}`)
+    } catch (error) {
+        console.error('Error deleting user:', error.response?.data || error.message)
+        throw error
     }
 }
