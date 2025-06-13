@@ -17,6 +17,10 @@ import MyTasks from '../views/tasks/MyTasks.vue'
 import TeamTasks from '../views/tasks/TeamTasks.vue'
 import ProjectTasks from '../views/tasks/ProjectTasks.vue'
 import TasksCalendar from '../views/tasks/TasksCalendar.vue'
+import SovaLayout from '../views/sova/SovaLayout.vue'
+import FactoriesList from '../views/sova/FactoriesList.vue'
+import FactoryDetails from '../views/sova/FactoryDetails.vue'
+import UserLayout from '../views/sova/UserLayout.vue'
 
 const routes = [
   {
@@ -204,6 +208,44 @@ const routes = [
         component: SecuritySettings,
         meta: {
           title: 'Настройки безопасности',
+          requiresAuth: true
+        }
+      }
+    ]
+  },
+  {
+    path: '/sova',
+    name: 'Sova',
+    component: SovaLayout,
+    meta: {
+      title: 'Sova Yönetimi',
+      requiresAuth: true
+    },
+    children: [
+      {
+        path: 'factories',
+        name: 'FactoriesList',
+        component: FactoriesList,
+        meta: {
+          title: 'Fabrikalar',
+          requiresAuth: true
+        }
+      },
+      {
+        path: 'factories/:id',
+        name: 'FactoryDetails',
+        component: FactoryDetails,
+        meta: {
+          title: 'Fabrika Detayları',
+          requiresAuth: true
+        }
+      },
+      {
+        path: 'users',
+        name: 'SovaUsers',
+        component: UserLayout,
+        meta: {
+          title: 'Пользователи',
           requiresAuth: true
         }
       }

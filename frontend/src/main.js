@@ -10,36 +10,46 @@ import './assets/scss/main.scss'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
   faHome,
+  faUser,
   faUsers,
   faCog,
-  faList,
-  faFolder,
-  faChevronDown,
-  faChevronUp,
-  faChevronLeft,
-  faChevronRight,
-  faBars,
-  faTimes,
-  faInfoCircle,
-  faUser
+  faSignOutAlt,
+  faBell,
+  faSearch,
+  faEllipsisV,
+  faPlus,
+  faIndustry,
+  faBuilding,
+  faEye,
+  faEdit,
+  faTrash,
+  faUserPlus,
+  faChartLine,
+  faTruck,
+  faExclamationTriangle
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 // Добавляем иконки в библиотеку
 library.add(
   faHome,
+  faUser,
   faUsers,
   faCog,
-  faList,
-  faFolder,
-  faChevronDown,
-  faChevronUp,
-  faChevronLeft,
-  faChevronRight,
-  faBars,
-  faTimes,
-  faInfoCircle,
-  faUser
+  faSignOutAlt,
+  faBell,
+  faSearch,
+  faEllipsisV,
+  faPlus,
+  faIndustry,
+  faBuilding,
+  faEye,
+  faEdit,
+  faTrash,
+  faUserPlus,
+  faChartLine,
+  faTruck,
+  faExclamationTriangle
 )
 
 const app = createApp(App)

@@ -31,6 +31,11 @@
         <span v-if="!isCollapsed">Группы</span>
       </router-link>
 
+      <router-link to="/sova/factories" class="nav-item" active-class="active">
+        <i class="fas fa-industry"></i>
+        <span v-if="!isCollapsed">Заводы</span>
+      </router-link>
+
       <div class="nav-group" :class="{ 'is-open': isTasksOpen }">
         <div class="nav-item" @click="handleTasksClick">
           <i class="fas fa-tasks"></i>
@@ -79,11 +84,8 @@
         <button class="logout-btn" @click="logout" title="Выйти">
           <i class="fas fa-sign-out-alt"></i>
         </button>
-        <button
-          class="collapse-btn"
-          @click="toggleSidebar"
-          :title="isCollapsed ? 'Развернуть панель' : 'Свернуть панель'"
-        >
+        <button class="collapse-btn" @click="toggleSidebar"
+          :title="isCollapsed ? 'Развернуть панель' : 'Свернуть панель'">
           <i :class="isCollapsed ? 'fas fa-chevron-right' : 'fas fa-chevron-left'"></i>
         </button>
       </div>
@@ -103,6 +105,7 @@ export default {
     return {
       isCollapsed: false,
       isTasksOpen: false,
+      isSovaOpen: false,
       user: {
         name: 'Иван Иванов',
         role: 'Администратор',
@@ -118,6 +121,11 @@ export default {
           this.isCollapsed = false
           this.isTasksOpen = true
         }
+        // Если маршрут начинается с /sova и сайдбар свернут, разворачиваем его
+        if (to.path.startsWith('/sova') && this.isCollapsed) {
+          this.isCollapsed = false
+          this.isSovaOpen = true
+        }
       },
       immediate: true
     }
@@ -132,6 +140,14 @@ export default {
         this.isTasksOpen = true
       } else {
         this.isTasksOpen = !this.isTasksOpen
+      }
+    },
+    handleSovaClick() {
+      if (this.isCollapsed) {
+        this.isCollapsed = false
+        this.isSovaOpen = true
+      } else {
+        this.isSovaOpen = !this.isSovaOpen
       }
     },
     logout() {
