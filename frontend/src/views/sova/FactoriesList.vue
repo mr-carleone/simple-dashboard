@@ -76,26 +76,95 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@use '@/assets/scss/mixins' as *;
+@use '@/assets/scss/variables' as *;
+
 .factories-list {
-    margin-top: 20px;
+  margin-top: 1.5rem;
+
+  @include mobile {
+    margin-top: 1rem;
+  }
 }
 
 .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  span {
+    font-size: 1.5rem;
+    color: var(--text-primary);
+
+    @include mobile {
+      font-size: 1.25rem;
+    }
+
+    @include xs-only {
+      font-size: 1.125rem;
+    }
+  }
+}
+
+.el-table {
+  /* Адаптация таблицы для мобильных устройств */
+  .el-table__cell {
+    padding: 10px 0;
+  }
+
+  .el-table__header-wrapper {
+    .el-table__header {
+      .el-table__cell {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+
+        @include mobile {
+          font-size: 0.8rem;
+        }
+      }
+    }
+  }
+
+  .el-table__row {
+    .el-table__cell {
+      font-size: 0.875rem;
+
+      @include mobile {
+        font-size: 0.8rem;
+      }
+
+      .el-tag {
+        font-size: 0.8rem;
+
+        @include mobile {
+          font-size: 0.7rem;
+        }
+      }
+
+      .el-button {
+        padding: 5px 8px;
+        font-size: 0.8rem;
+
+        @include mobile {
+          padding: 4px 6px;
+          font-size: 0.75rem;
+        }
+      }
+    }
+  }
 }
 
 .el-button-group {
-    .el-button {
-        padding: 5px 10px;
-    }
+  .el-button {
+    padding: 5px 10px;
+  }
 }
 
 .dialog-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
 }
+
 </style>

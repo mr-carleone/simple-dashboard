@@ -14,7 +14,12 @@
         <el-table-column prop="id" label="ID" width="80" />
         <el-table-column label="Аватар" width="80">
           <template #default="{ row }">
-            <img :src="row.avatar_url" alt="User Avatar" class="user-avatar" />
+            <img
+              :src="row.avatar_url || getDefaultAvatar(row.username)"
+              alt="User Avatar"
+              class="user-avatar"
+              @error="handleAvatarError"
+            />
           </template>
         </el-table-column>
         <el-table-column prop="username" label="Имя пользователя" />
@@ -111,7 +116,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
-import { createUser, getUsers, updateUser, deleteUser } from '@/api/users'
+import { userApi } from '@/api/users'
 
 const users = ref([])
 const loading = ref(false)
@@ -146,14 +151,23 @@ const rules = {
   ]
 }
 
+// Функция для получения аватара по умолчанию
+const getDefaultAvatar = (username) => {
+  const name = username ? encodeURIComponent(username) : 'User'
+  return `https://ui-avatars.com/api/?background=random&name=${name}&size=128`
+}
+
+// Обработчик ошибки загрузки аватара
+const handleAvatarError = (event) => {
+  event.target.src = getDefaultAvatar('') // Устанавливаем общий аватар по умолчанию при ошибке
+}
+
 const fetchUsers = async () => {
-  loading.value = true
   try {
-    users.value = await getUsers()
+    const response = await userApi.getAllUsers()
+    users.value = response.data
   } catch (error) {
-    ElMessage.error('Ошибка при загрузке пользователей')
-  } finally {
-    loading.value = false
+    console.error('Ошибка при получении списка пользователей:', error)
   }
 }
 
@@ -178,16 +192,16 @@ const editUser = (user) => {
 const saveUser = async () => {
   try {
     if (isEditing.value) {
-      await updateUser(currentUser.value.id, currentUser.value)
+      await handleUpdateUser(currentUser.value.id, currentUser.value)
       ElMessage.success('Пользователь успешно обновлен')
     } else {
-      await createUser(currentUser.value)
+      await handleCreateUser(currentUser.value)
       ElMessage.success('Пользователь успешно создан')
     }
     dialogVisible.value = false
     fetchUsers()
   } catch (error) {
-    ElMessage.error(`Ошибка при сохранении пользователя: ${error.message}`)
+    console.error('Ошибка при сохранении пользователя:', error)
   }
 }
 
@@ -198,12 +212,12 @@ const confirmDelete = (user) => {
 
 const handleDelete = async () => {
   try {
-    await deleteUser(userToDelete.value.id)
+    await handleDeleteUser(userToDelete.value.id)
     ElMessage.success('Пользователь успешно удален')
     deleteDialogVisible.value = false
     fetchUsers()
   } catch (error) {
-    ElMessage.error('Ошибка при удалении пользователя')
+    console.error('Ошибка при удалении пользователя:', error)
   }
 }
 
@@ -224,98 +238,235 @@ const getRoleLabel = (role) => {
   return labels[role] || role
 }
 
+const handleCreateUser = async (userData) => {
+  try {
+    await userApi.createUser(userData)
+    await fetchUsers()
+  } catch (error) {
+    console.error('Ошибка при создании пользователя:', error)
+  }
+}
+
+const handleUpdateUser = async (userId, userData) => {
+  try {
+    await userApi.updateUser(userId, userData)
+    await fetchUsers()
+  } catch (error) {
+    console.error('Ошибка при обновлении пользователя:', error)
+  }
+}
+
+const handleDeleteUser = async (userId) => {
+  try {
+    await userApi.deleteUser(userId)
+    await fetchUsers()
+  } catch (error) {
+    console.error('Ошибка при удалении пользователя:', error)
+  }
+}
+
 onMounted(() => {
   fetchUsers()
 })
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@use '@/assets/scss/mixins' as *;
+@use '@/assets/scss/variables' as *;
+
 .users-layout {
-  padding: 20px;
+  padding: 1.5rem;
+
+  @include mobile {
+    padding: 1rem;
+  }
+
+  @include xs-only {
+    padding: 0.75rem;
+  }
 }
 
 .users-card {
-  margin-bottom: 20px;
-}
+  margin-bottom: 2rem;
 
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.card-header h2 {
-  margin: 0;
-}
-
-.dialog-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-}
-
-.user-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 1px solid var(--border-color);
-}
-
-/* Общие стили для меток и контента формы */
-.user-form .el-form-item {
-  display: flex;
-  align-items: baseline;
-  margin-bottom: 18px;
-}
-
-.user-form .el-form-item__label {
-  width: 280px; /* Фиксированная ширина для меток на десктопе (увеличено) */
-  text-align: right; /* Выравнивание по правому краю */
-  padding-right: 12px; /* Отступ справа от метки */
-  white-space: nowrap; /* Запретить перенос текста метки */
-  box-sizing: border-box;
-}
-
-.user-form .el-form-item__content {
-  flex: 1;
-}
-
-/* Стили для диалога на маленьких экранах */
-@media (max-width: 768px) {
-  .user-dialog {
-    width: 95% !important;
-    max-width: 95vw !important;
-    min-width: 300px !important;
+  @include mobile {
+    margin-bottom: 1.5rem;
   }
 
-  .user-dialog .el-dialog__body {
-    padding: 10px !important;
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    h2 {
+      margin: 0;
+      font-size: 1.5rem;
+      color: var(--text-primary);
+
+      @include mobile {
+        font-size: 1.25rem;
+      }
+
+      @include xs-only {
+        font-size: 1.125rem;
+      }
+    }
+
+    .el-button {
+      padding: 0.6rem 1rem;
+      font-size: 0.9rem;
+
+      @include mobile {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.8rem;
+      }
+    }
   }
 
-  .user-form .el-form-item {
-    flex-direction: column; /* Элементы в колонку */
-    align-items: flex-start; /* Выравнивание по левому краю */
-    margin-bottom: 15px;
+  .el-table {
+    /* Адаптация таблицы для мобильных устройств */
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+
+      @include mobile {
+        width: 32px;
+        height: 32px;
+      }
+    }
+
+    .el-table__cell {
+      padding: 10px 0;
+    }
+
+    .el-table__header-wrapper {
+      .el-table__header {
+        .el-table__cell {
+          font-size: 0.9rem;
+          color: var(--text-secondary);
+
+          @include mobile {
+            font-size: 0.8rem;
+          }
+        }
+      }
+    }
+
+    .el-table__row {
+      .el-table__cell {
+        font-size: 0.875rem;
+
+        @include mobile {
+          font-size: 0.8rem;
+        }
+
+        .el-tag {
+          font-size: 0.8rem;
+
+          @include mobile {
+            font-size: 0.7rem;
+          }
+        }
+
+        .el-button-group {
+          .el-button {
+            padding: 5px 8px;
+            font-size: 0.8rem;
+
+            @include mobile {
+              padding: 4px 6px;
+              font-size: 0.75rem;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.user-dialog {
+  .el-dialog__header {
+    .el-dialog__title {
+      font-size: 1.5rem;
+
+      @include mobile {
+        font-size: 1.25rem;
+      }
+    }
   }
 
-  .user-form .el-form-item__label {
-    width: 100% !important; /* Метка занимает всю ширину */
-    text-align: left !important;
-    padding-bottom: 5px;
-    padding-right: 0 !important;
-    white-space: normal; /* Разрешить перенос текста метки на мобильных */
-    display: block; /* Убедимся, что метка занимает отдельную строку */
+  .el-form-item {
+    margin-bottom: 1.5rem;
+
+    @include mobile {
+      margin-bottom: 1rem;
+    }
+
+    .el-form-item__label {
+      font-size: 0.9rem;
+
+      @include mobile {
+        font-size: 0.8rem;
+      }
+    }
+
+    .el-input__inner,
+    .el-select__inner {
+      height: 40px;
+      font-size: 0.875rem;
+
+      @include mobile {
+        height: 36px;
+        font-size: 0.8rem;
+      }
+    }
+
+    .el-switch__core {
+      height: 20px;
+      line-height: 20px;
+      font-size: 0.875rem;
+
+      @include mobile {
+        height: 18px;
+        line-height: 18px;
+        font-size: 0.8rem;
+      }
+    }
   }
 
-  .user-form .el-form-item__content {
-    margin-left: 0 !important; /* Убираем отступ */
-    width: 100% !important; /* Контент занимает всю ширину */
+  .dialog-footer {
+    .el-button {
+      padding: 0.6rem 1rem;
+      font-size: 0.9rem;
+
+      @include mobile {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.8rem;
+      }
+    }
+  }
+}
+
+/* Адаптация для диалога подтверждения удаления */
+.el-dialog.el-dialog--center {
+  &.delete-dialog {
+    width: 400px;
+
+    @include mobile {
+      width: 90%;
+    }
   }
 
-  /* Убедимся, что инпуты и селекты занимают всю ширину */
-  .user-form .el-input, .user-form .el-select {
-    width: 100% !important;
+  .el-dialog__body {
+    p {
+      font-size: 1rem;
+
+      @include mobile {
+        font-size: 0.9rem;
+      }
+    }
   }
 }
 </style>

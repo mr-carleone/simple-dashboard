@@ -5,16 +5,35 @@
       <form @submit.prevent="handleLogin" class="login-form">
         <div class="form-group">
           <label for="email">Email</label>
-          <input type="email" id="email" v-model="email" placeholder="Введите email" required />
+          <input
+            type="email"
+            id="email"
+            name="email"
+            v-model="email"
+            placeholder="Введите email"
+            required
+            pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}"
+            autocomplete="email"
+          />
         </div>
         <div class="form-group">
           <label for="password">Пароль</label>
-          <input type="password" id="password" v-model="password" placeholder="Введите пароль" required />
+          <input
+            type="password"
+            id="password"
+            name="password"
+            v-model="password"
+            placeholder="Введите пароль"
+            required
+            autocomplete="current-password"
+          />
         </div>
         <div v-if="error" class="error-message">
           {{ error }}
         </div>
-        <button type="submit" class="login-button">Войти</button>
+        <button type="submit" class="login-button" :disabled="loading">
+          {{ loading ? 'Вход...' : 'Войти' }}
+        </button>
       </form>
     </div>
   </div>
@@ -23,92 +42,62 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useMainStore } from '@/store' // Импортируем наш Pinia store
+import { useMainStore } from '@/store'
+import api from '@/api/config'
 
 const router = useRouter()
 const email = ref('')
 const password = ref('')
 const error = ref('')
-const mainStore = useMainStore() // Получаем экземпляр store
-
-// Получаем значения из .env
-const ENV_LOGIN = import.meta.env.VITE_USER_LOGIN
-const ENV_PASSWORD = import.meta.env.VITE_USER_PASSWORD
-
-// Для отладки
-console.log('ENV_LOGIN:', ENV_LOGIN)
-console.log('ENV_PASSWORD:', ENV_PASSWORD)
+const loading = ref(false)
+const mainStore = useMainStore()
 
 async function handleLogin() {
   error.value = ''
-  let loggedIn = false; // Флаг для отслеживания успешного входа любым методом
+  loading.value = true
 
-  try {
-    // 1. Сначала пробуем войти через API
-    const apiResponse = await fetch('/api/v1/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email: email.value.trim(), // Обрезаем пробелы
-        password: password.value.trim(), // Обрезаем пробелы
-      }),
-    })
-
-    console.log('API Response Status:', apiResponse.status);
-    console.log('API Response OK:', apiResponse.ok);
-
-    if (apiResponse.ok) {
-      const data = await apiResponse.json()
-      localStorage.setItem('token', data.access_token)
-      // Обновляем состояние пользователя в store после успешного API входа
-      await mainStore.fetchCurrentUser();
-      router.push({ name: 'Home' })
-      loggedIn = true
-      return
-    } else {
-      // Вход через API не удался (например, 401)
-      console.log('Вход через API не удался. Статус:', apiResponse.status);
-      // Продолжаем попытку через переменные окружения
-    }
-
-  } catch (apiError) {
-    // Эта секция catch для сетевых ошибок или других ошибок, которые
-    // не позволяют fetch вернуть ответ.
-    console.error('Сетевая или непредвиденная ошибка API при входе:', apiError);
-    // Продолжаем попытку через переменные окружения
-  }
-
-  // 2. Если API вход не удался или произошла сетевая ошибка, проверяем переменные окружения
-  console.log('Попытка входа через переменные окружения...');
-  console.log('Совпадение Email:', email.value.trim() === ENV_LOGIN);
-  console.log('Совпадение Пароля:', password.value.trim() === ENV_PASSWORD);
-
-  if (email.value.trim() === ENV_LOGIN && password.value.trim() === ENV_PASSWORD) {
-    localStorage.setItem('token', 'admin-token')
-    // Явно обновляем состояние пользователя в store для локального админа
-    mainStore.user = {
-      email: ENV_LOGIN,
-      username: 'Локальный Администратор',
-      role: 'admin',
-      is_active: true,
-    }
-    console.log("Вход выполнен как локальный администратор (через ENV).")
-    router.push({ name: 'Home' })
-    loggedIn = true
+  if (!email.value || !password.value) {
+    error.value = 'Пожалуйста, введите email и пароль.'
     return
   }
 
-  // 3. Если ни один из способов не сработал
-  if (!loggedIn) {
-    error.value = 'Неверный логин или пароль'
-    console.log('Вход не удался: Неверные учетные данные.');
+  try {
+    const response = await api.post('/auth/login', {
+      email: email.value.trim(),
+      password: password.value.trim(),
+    })
+
+    if (response.data && response.data.access_token) {
+      localStorage.setItem('token', response.data.access_token)
+      await mainStore.fetchCurrentUser()
+
+      if (mainStore.isAuthenticated) {
+        router.push({ name: 'Home' })
+      } else {
+        error.value = 'Ошибка аутентификации. Пожалуйста, попробуйте снова.'
+      }
+    } else {
+      error.value = 'Неверный логин или пароль.'
+    }
+  } catch (err) {
+    console.error('Ошибка входа:', err)
+    let errorMessage = 'Произошла ошибка при попытке входа.'
+    if (err.response && err.response.data && err.response.data.detail) {
+      errorMessage = err.response.data.detail
+    } else if (err.message) {
+      errorMessage = err.message
+    }
+    error.value = errorMessage
+  } finally {
+    loading.value = false
   }
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@use '@/assets/scss/mixins' as *;
+@use '@/assets/scss/variables' as *;
+
 .login-container {
   position: fixed;
   top: 0;
@@ -127,6 +116,14 @@ async function handleLogin() {
     Roboto,
     sans-serif;
   overflow: hidden;
+
+  @include mobile {
+    padding: 1rem;
+  }
+
+  @include xs-only {
+    padding: 0.5rem;
+  }
 }
 
 .login-box {
@@ -137,6 +134,16 @@ async function handleLogin() {
   width: 100%;
   max-width: 400px;
   margin: 1rem;
+
+  @include mobile {
+    padding: 2rem;
+    margin: 0.75rem;
+  }
+
+  @include xs-only {
+    padding: 1.5rem;
+    margin: 0.5rem;
+  }
 }
 
 h1 {
@@ -145,10 +152,24 @@ h1 {
   font-weight: 700;
   margin-bottom: 2rem;
   text-align: center;
+
+  @include mobile {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  @include xs-only {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
 }
 
 .form-group {
   margin-bottom: 1.5rem;
+
+  @include mobile {
+    margin-bottom: 1rem;
+  }
 }
 
 label {
@@ -156,6 +177,11 @@ label {
   margin-bottom: 0.5rem;
   color: var(--text-secondary);
   font-weight: 500;
+  font-size: 0.9rem;
+
+  @include mobile {
+    font-size: 0.8rem;
+  }
 }
 
 input {
@@ -167,6 +193,16 @@ input {
   transition: border-color 0.2s;
   background-color: var(--card-bg);
   color: var(--text-primary);
+
+  @include mobile {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.9rem;
+  }
+
+  @include xs-only {
+    padding: 0.5rem 0.7rem;
+    font-size: 0.8rem;
+  }
 }
 
 input:focus {
@@ -186,6 +222,16 @@ input:focus {
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  @include mobile {
+    padding: 0.6rem;
+    font-size: 0.9rem;
+  }
+
+  @include xs-only {
+    padding: 0.5rem;
+    font-size: 0.8rem;
+  }
 }
 
 .login-button:hover {
@@ -199,6 +245,11 @@ input:focus {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.login-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
 .error-message {
   margin-top: 1rem;
   padding: 0.75rem;
@@ -206,16 +257,12 @@ input:focus {
   color: white;
   border-radius: 6px;
   text-align: center;
-}
+  font-size: 0.9rem;
 
-@media (max-width: 480px) {
-  .login-box {
-    margin: 1rem;
-    padding: 1.5rem;
-  }
-
-  h1 {
-    font-size: 1.5rem;
+  @include mobile {
+    margin-top: 0.75rem;
+    padding: 0.6rem;
+    font-size: 0.8rem;
   }
 }
 </style>

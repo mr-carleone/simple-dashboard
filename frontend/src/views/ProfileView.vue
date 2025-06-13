@@ -66,10 +66,21 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@use '@/assets/scss/mixins' as *;
+@use '@/assets/scss/variables' as *;
+
 .profile-view {
   max-width: 800px;
   margin: 0 auto;
   padding: 2rem;
+
+  @include mobile {
+    padding: 1.5rem;
+  }
+
+  @include xs-only {
+    padding: 1rem;
+  }
 }
 
 .profile-header {
@@ -79,6 +90,20 @@ export default {
   margin-bottom: 3rem;
   padding-bottom: 2rem;
   border-bottom: 1px solid var(--border-color);
+
+  @include mobile {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+  }
+
+  @include xs-only {
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+  }
 }
 
 .profile-avatar {
@@ -102,6 +127,18 @@ export default {
     font-size: 3rem;
     color: var(--text-secondary);
   }
+
+  @include mobile {
+    width: 100px;
+    height: 100px;
+    font-size: 2.5rem;
+  }
+
+  @include xs-only {
+    width: 80px;
+    height: 80px;
+    font-size: 2rem;
+  }
 }
 
 .profile-info {
@@ -109,16 +146,41 @@ export default {
     margin: 0 0 0.5rem;
     font-size: 2rem;
     color: var(--text-primary);
+
+    @include mobile {
+      font-size: 1.75rem;
+    }
+
+    @include xs-only {
+      font-size: 1.5rem;
+    }
   }
 
   .profile-email {
     color: var(--text-secondary);
     margin-bottom: 0.5rem;
+    font-size: 1rem;
+
+    @include mobile {
+      font-size: 0.9rem;
+    }
+
+    @include xs-only {
+      font-size: 0.8rem;
+    }
   }
 
   .profile-position {
     color: var(--text-secondary);
     font-size: 1.1rem;
+
+    @include mobile {
+      font-size: 1rem;
+    }
+
+    @include xs-only {
+      font-size: 0.9rem;
+    }
 
     span {
       color: var(--text-tertiary);
@@ -130,6 +192,14 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 2rem;
+
+  @include mobile {
+    gap: 1.5rem;
+  }
+
+  @include xs-only {
+    gap: 1rem;
+  }
 }
 
 .profile-section {
@@ -137,6 +207,16 @@ export default {
     margin: 0 0 1rem;
     font-size: 1.5rem;
     color: var(--text-primary);
+
+    @include mobile {
+      font-size: 1.25rem;
+      margin-bottom: 0.75rem;
+    }
+
+    @include xs-only {
+      font-size: 1.125rem;
+      margin-bottom: 0.5rem;
+    }
   }
 }
 
@@ -144,6 +224,15 @@ export default {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 1rem;
+
+  @include mobile {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  @include xs-only {
+    gap: 0.5rem;
+  }
 }
 
 .info-item {
@@ -154,13 +243,38 @@ export default {
   background-color: var(--bg-secondary);
   border-radius: 0.5rem;
 
+  @include mobile {
+    padding: 0.75rem;
+  }
+
+  @include xs-only {
+    padding: 0.6rem;
+  }
+
   i {
     font-size: 1.25rem;
     color: var(--primary-color);
+
+    @include mobile {
+      font-size: 1.125rem;
+    }
+
+    @include xs-only {
+      font-size: 1rem;
+    }
   }
 
   span {
     color: var(--text-primary);
+    font-size: 0.9rem;
+
+    @include mobile {
+      font-size: 0.8rem;
+    }
+
+    @include xs-only {
+      font-size: 0.75rem;
+    }
   }
 }
 
@@ -168,28 +282,33 @@ export default {
   line-height: 1.6;
   color: var(--text-primary);
   white-space: pre-line;
+  font-size: 1rem;
+
+  @include mobile {
+    font-size: 0.9rem;
+  }
+
+  @include xs-only {
+    font-size: 0.8rem;
+  }
 }
 
 .profile-actions {
   margin-top: 2rem;
   display: flex;
   justify-content: flex-end;
-}
 
-@media (max-width: 768px) {
-  .profile-header {
-    flex-direction: column;
-    text-align: center;
-    gap: 1rem;
+  @include mobile {
+    margin-top: 1.5rem;
+    justify-content: center;
   }
 
-  .profile-avatar {
-    width: 100px;
-    height: 100px;
-  }
-
-  .info-grid {
-    grid-template-columns: 1fr;
+  .btn {
+    @include mobile {
+      width: 100%;
+      padding: 0.6rem 1rem;
+      font-size: 0.9rem;
+    }
   }
 }
 </style>

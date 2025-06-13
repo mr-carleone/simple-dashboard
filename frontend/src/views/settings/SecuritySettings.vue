@@ -9,10 +9,17 @@
             <input
               :type="showCurrentPassword ? 'text' : 'password'"
               id="currentPassword"
+              name="currentPassword"
               v-model="passwords.current"
               placeholder="Введите текущий пароль"
+              autocomplete="current-password"
             />
-            <button class="toggle-password" @click="showCurrentPassword = !showCurrentPassword">
+            <button
+              type="button"
+              class="toggle-password"
+              @click="showCurrentPassword = !showCurrentPassword"
+              aria-label="Показать/скрыть пароль"
+            >
               <i :class="showCurrentPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
             </button>
           </div>
@@ -24,15 +31,25 @@
             <input
               :type="showNewPassword ? 'text' : 'password'"
               id="newPassword"
+              name="newPassword"
               v-model="passwords.new"
               @input="validateNewPassword"
               placeholder="Введите новый пароль"
+              autocomplete="new-password"
             />
-            <button class="toggle-password" @click="showNewPassword = !showNewPassword">
+            <button
+              type="button"
+              class="toggle-password"
+              @click="showNewPassword = !showNewPassword"
+              aria-label="Показать/скрыть пароль"
+            >
               <i :class="showNewPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
             </button>
           </div>
-          <ul v-if="passwords.new.length > 0 || passwordErrors.length > 0" class="password-hints">
+          <ul v-if="passwords.new.length > 0 || passwordErrors.length > 0"
+class="password-hints"
+role="list"
+aria-label="Требования к паролю">
             <li :class="{ 'valid': isNewPasswordLongEnough, 'invalid': !isNewPasswordLongEnough }">Не менее 8 символов</li>
             <li :class="{ 'valid': isNewPasswordEnglishOnly, 'invalid': !isNewPasswordEnglishOnly }">Только английские буквы</li>
             <li :class="{ 'valid': hasNewPasswordUppercase, 'invalid': !hasNewPasswordUppercase }">Хотя бы одна заглавная буква</li>
@@ -46,14 +63,21 @@
             <input
               :type="showConfirmPassword ? 'text' : 'password'"
               id="confirmPassword"
+              name="confirmPassword"
               v-model="passwords.confirm"
               placeholder="Подтвердите новый пароль"
+              autocomplete="new-password"
             />
-            <button class="toggle-password" @click="showConfirmPassword = !showConfirmPassword">
+            <button
+              type="button"
+              class="toggle-password"
+              @click="showConfirmPassword = !showConfirmPassword"
+              aria-label="Показать/скрыть пароль"
+            >
               <i :class="showConfirmPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
             </button>
           </div>
-          <p v-if="passwords.confirm.length > 0 && passwords.new !== passwords.confirm" class="text-danger">Пароли не совпадают</p>
+          <p v-if="passwords.confirm.length > 0 && passwords.new !== passwords.confirm" class="text-danger" role="alert">Пароли не совпадают</p>
         </div>
       </div>
       <div class="settings-actions mt-4">
@@ -68,8 +92,13 @@
       <h2>Двухфакторная аутентификация</h2>
       <div class="settings-grid">
         <div class="setting-item">
-          <label class="checkbox-label">
-            <input type="checkbox" v-model="security.twoFactor" />
+          <label class="checkbox-label" for="twoFactor">
+            <input
+              type="checkbox"
+              id="twoFactor"
+              name="twoFactor"
+              v-model="security.twoFactor"
+            />
             <span>Включить двухфакторную аутентификацию</span>
           </label>
           <p class="setting-description">Добавьте дополнительный уровень безопасности к вашей учетной записи</p>
@@ -78,7 +107,7 @@
     </div>
 
     <div class="settings-section">
-      <h2>Сессии</h2>
+      <h2>Текущая сессия</h2>
       <div class="settings-grid">
         <div class="setting-item">
           <div class="sessions-list">
@@ -87,17 +116,15 @@
                 <i :class="session.icon"></i>
                 <div class="session-details">
                   <span class="session-device">{{ session.device }}</span>
-                  <span class="session-location">{{ session.location }}</span>
                   <span class="session-time">{{ session.lastActive }}</span>
                 </div>
               </div>
-              <button v-if="!session.current" class="btn btn-outline text-danger" @click="terminateSession(session)">
-                <i class="fas fa-times"></i>
-                Завершить
-              </button>
-              <span v-else class="current-session">Текущая сессия</span>
+              <span class="current-session">Активная сессия</span>
             </div>
           </div>
+          <p class="session-description">
+            Это ваша текущая активная сессия. Для безопасности рекомендуется выходить из системы, если вы используете общий компьютер.
+          </p>
         </div>
       </div>
     </div>
@@ -117,7 +144,6 @@
 
 <script>
 import { useProfileStore } from '@/store/profile'
-import { computed } from 'vue'
 
 export default {
   name: 'SecuritySettings',
@@ -141,27 +167,15 @@ export default {
       sessions: [
         {
           id: 1,
-          device: 'Chrome на Windows',
-          location: 'Москва, Россия',
+          device: navigator.userAgent.includes('Chrome') ? 'Chrome' :
+                 navigator.userAgent.includes('Firefox') ? 'Firefox' :
+                 navigator.userAgent.includes('Safari') ? 'Safari' : 'Браузер',
+          location: 'Текущее местоположение',
           lastActive: 'Сейчас',
-          icon: 'fab fa-chrome',
+          icon: navigator.userAgent.includes('Chrome') ? 'fab fa-chrome' :
+                navigator.userAgent.includes('Firefox') ? 'fab fa-firefox' :
+                navigator.userAgent.includes('Safari') ? 'fab fa-safari' : 'fas fa-globe',
           current: true
-        },
-        {
-          id: 2,
-          device: 'Safari на iPhone',
-          location: 'Санкт-Петербург, Россия',
-          lastActive: '2 часа назад',
-          icon: 'fab fa-safari',
-          current: false
-        },
-        {
-          id: 3,
-          device: 'Firefox на MacOS',
-          location: 'Нью-Йорк, США',
-          lastActive: '1 день назад',
-          icon: 'fab fa-firefox',
-          current: false
         }
       ],
       defaultSecurity: null,
@@ -174,13 +188,13 @@ export default {
     },
     isNewPasswordEnglishOnly() {
       // Sadece İngilizce harfler, rakamlar ve izin verilen özel karakterler
-      return /^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};:\'\"\\\\|,.<>\/?~\u0060]*$/.test(this.passwords.new)
+      return /^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};:'"\\|,.<>\/?~`]*$/.test(this.passwords.new)
     },
     hasNewPasswordUppercase() {
       return /[A-Z]/.test(this.passwords.new)
     },
     hasNewPasswordEnoughSpecialChars() {
-      const specialCharCount = (this.passwords.new.match(/[!@#$%^&*()_+\-=\[\]{};:\'\"\\\\|,.<>\/?~\u0060]/g) || []).length
+      const specialCharCount = (this.passwords.new.match(/[!@#$%^&*()_+\-=\[\]{};:'"\\|,.<>\/?~`]/g) || []).length
       return specialCharCount >= 2
     }
   },
@@ -210,7 +224,6 @@ export default {
     },
     validateNewPassword() {
       this.passwordErrors = []
-      const newPass = this.passwords.new
 
       // Kuralları kontrol etmek için hesaplanmış özellikleri kullan
       if (!this.isNewPasswordLongEnough) {
@@ -273,18 +286,61 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@use '@/assets/scss/mixins' as *;
+@use '@/assets/scss/variables' as *;
+
 .security-settings {
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 2rem;
+
+  @include mobile {
+    padding: 1rem;
+    gap: 1.5rem;
+  }
+
+  @include xs-only {
+    padding: 0.75rem;
+    gap: 1rem;
+  }
 }
 
 .settings-section {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+
   h2 {
     margin: 0 0 1.5rem;
     font-size: 1.25rem;
     color: var(--text-primary);
+
+    @include mobile {
+      margin: 0 0 1rem;
+      font-size: 1.125rem;
+    }
+
+    @include xs-only {
+      margin: 0 0 0.75rem;
+      font-size: 1rem;
+    }
+  }
+
+  .setting-description {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-top: 0.5rem;
+
+    @include mobile {
+      font-size: 0.8125rem;
+    }
+
+    @include xs-only {
+      font-size: 0.75rem;
+    }
   }
 }
 
@@ -292,6 +348,15 @@ export default {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 1.5rem;
+
+  @include mobile {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  @include xs-only {
+    gap: 0.75rem;
+  }
 }
 
 .setting-item {
@@ -302,13 +367,18 @@ export default {
   label {
     font-size: 0.875rem;
     color: var(--text-secondary);
+
+    @include mobile {
+      font-size: 0.8125rem;
+    }
+
+    @include xs-only {
+      font-size: 0.75rem;
+    }
   }
 
-  input[type='text'],
-  input[type='email'],
-  input[type='tel'],
   input[type='password'],
-  textarea {
+  input[type='text'] {
     width: 100%;
     padding: 0.75rem;
     border: 1px solid var(--border-color);
@@ -316,6 +386,16 @@ export default {
     background-color: var(--input-bg);
     color: var(--text-primary);
     font-size: 0.875rem;
+
+    @include mobile {
+      padding: 0.625rem;
+      font-size: 0.8125rem;
+    }
+
+    @include xs-only {
+      padding: 0.5rem;
+      font-size: 0.75rem;
+    }
 
     &:focus {
       outline: none;
@@ -326,44 +406,80 @@ export default {
   .password-input {
     position: relative;
     width: 100%;
-  }
 
-  .password-input input {
-    padding-right: 2.5rem; /* Make space for the toggle button */
-  }
+    input {
+      padding-right: 3rem; /* Пространство для кнопки переключения */
+    }
 
-  .toggle-password {
-    position: absolute;
-    right: 0.75rem;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    color: var(--text-secondary);
-    cursor: pointer;
-    font-size: 1rem;
-    padding: 0;
-  }
+    .toggle-password {
+      position: absolute;
+      right: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 1rem;
 
-  textarea {
-    resize: vertical;
+      @include mobile {
+        font-size: 0.9375rem;
+        right: 0.625rem;
+      }
+
+      @include xs-only {
+        font-size: 0.875rem;
+        right: 0.5rem;
+      }
+
+      &:focus {
+        outline: none;
+      }
+    }
   }
 
   .password-hints {
     list-style: none;
     padding: 0;
     margin: 0.5rem 0 0;
-    font-size: 0.8rem;
+    font-size: 0.8125rem;
     color: var(--text-secondary);
+
+    @include mobile {
+      font-size: 0.75rem;
+    }
+
+    @include xs-only {
+      font-size: 0.6875rem;
+    }
 
     li {
       margin-bottom: 0.25rem;
+      display: flex;
+      align-items: center;
+
+      &::before {
+        content: '\2022'; /* Bullet point */
+        margin-right: 0.5rem;
+        color: var(--text-secondary);
+      }
 
       &.valid {
         color: var(--success-color);
+
+        &::before {
+          content: '\2713'; /* Checkmark */
+          color: var(--success-color);
+        }
       }
+
       &.invalid {
         color: var(--danger-color);
+
+        &::before {
+          content: '\2717'; /* Cross mark */
+          color: var(--danger-color);
+        }
       }
     }
   }
@@ -454,6 +570,11 @@ export default {
   gap: 1rem;
   margin-top: 1.5rem;
 
+  @include mobile {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
   .btn {
     padding: 0.75rem 1.5rem;
     border-radius: 0.5rem;
@@ -483,54 +604,72 @@ export default {
   }
 }
 
-@media (max-width: 768px) {
-  .settings-grid {
-    grid-template-columns: 1fr;
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+
+  @include mobile {
+    font-size: 0.8125rem;
   }
 
-  .avatar-upload {
-    flex-direction: column;
-    align-items: flex-start;
+  @include xs-only {
+    font-size: 0.75rem;
   }
 
-  .settings-actions {
-    flex-direction: column;
-  }
+  input[type='checkbox'] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
 
-  .session-item {
-    flex-direction: column; /* Элементы сессии располагаются вертикально */
-    align-items: flex-start; /* Выравнивание элементов по левому краю */
-    justify-content: flex-start; /* Выравнивание контента по верху */
-    gap: 0.5rem; /* Вертикальный отступ между элементами */
-    box-sizing: border-box; /* Учитываем padding и border в общей ширине */
-    padding: 1rem; /* Сохраняем внутренние отступы */
-    width: 100%; /* Элемент занимает всю доступную ширину */
-
-    .session-info {
-      display: flex; /* Делаем flex-контейнером */
-      flex-direction: column; /* Иконка и детали располагаются вертикально */
-      align-items: flex-start; /* Выравнивание иконки и деталей по левому краю */
-      width: 100%; /* Занимает всю доступную ширину */
-      margin-bottom: 0; /* Сброс нижнего отступа */
-      box-sizing: border-box; /* Учитываем padding и border */
-
-      .session-details {
-        width: 100%; /* Детали занимают всю доступную ширину */
-        box-sizing: border-box; /* Учитываем padding и border */
-        span {
-          display: block; /* Каждый span на новой строке */
-          width: 100%; /* Занимает всю доступную ширину */
-          overflow-wrap: break-word; /* Разрешаем перенос длинных слов */
-          text-align: left; /* Выравнивание текста по левому краю */
-        }
-      }
+    @include mobile {
+      width: 16px;
+      height: 16px;
     }
 
-    .btn, .current-session {
-      width: 100%; /* Кнопки/спаны занимают всю ширину */
-      margin-left: 0; /* Убираем левый отступ */
-      text-align: center; /* Центрируем текст кнопок */
-      box-sizing: border-box; /* Учитываем padding и border */
+    @include xs-only {
+      width: 14px;
+      height: 14px;
+    }
+  }
+}
+
+.sessions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.session-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  background-color: var(--input-bg);
+
+  @include mobile {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.625rem 0.75rem;
+  }
+}
+
+.session-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  i {
+    font-size: 1.25rem;
+    color: var(--primary-color);
+
+    @include mobile {
+      font-size: 1.125rem;
     }
   }
 }
@@ -538,47 +677,40 @@ export default {
 .session-details {
   display: flex;
   flex-direction: column;
-  flex: 1; /* Allow it to grow and shrink */
-  min-width: 0; /* Important for flex items with long content */
 
-  span {
-    overflow-wrap: break-word; /* Allow long words to break */
+  .session-device {
+    font-weight: 500;
+    color: var(--text-primary);
+    font-size: 0.9375rem;
+
+    @include mobile {
+      font-size: 0.875rem;
+    }
+  }
+
+  .session-time {
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+
+    @include mobile {
+      font-size: 0.75rem;
+    }
   }
 }
 
-.sessions-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.session-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.5rem;
-  border: 1px solid var(--border-color);
-  border-radius: 0.5rem;
-  background-color: var(--input-bg);
-
-  // .btn {
-  //   flex-shrink: 0;
-  //   margin-left: 1rem;
-  // }
-}
-
-.session-info {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
 .current-session {
-  padding: 0.75rem 1.5rem; /* Match button padding */
-  border-radius: 0.5rem; /* Match button border-radius */
-  background-color: var(--success-color); /* Give it a subtle background */
-  color: #fff; /* Ensure text color is readable */
-  text-align: center; /* Center the text */
-  flex-shrink: 0; /* Prevent it from shrinking */
+  font-size: 0.8125rem;
+  color: var(--primary-color);
+  font-weight: 500;
+
+  @include mobile {
+    font-size: 0.75rem;
+  }
+}
+
+.session-description {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
 }
 </style>

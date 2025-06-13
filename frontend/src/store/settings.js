@@ -3,14 +3,14 @@ import { ref } from 'vue'
 
 export const useSettingsStore = defineStore('settings', () => {
     const settings = ref({
-        systemName: 'Dashboard',
-        language: 'ru',
-        timezone: 'UTC+3',
-        theme: 'light',
-        primaryColor: '#3498db',
+        systemName: null,
+        language: null,
+        timezone: null,
+        theme: null,
+        primaryColor: null,
         notifications: {
-            email: true,
-            browser: false
+            email: null,
+            browser: null
         }
     })
 
@@ -38,26 +38,29 @@ export const useSettingsStore = defineStore('settings', () => {
     }
 
     const applySettings = () => {
-        // Применяем тему
-        document.documentElement.setAttribute('data-theme', settings.value.theme)
+        if (settings.value.theme) {
+            document.documentElement.setAttribute('data-theme', settings.value.theme)
+        }
 
-        // Применяем основной цвет
-        document.documentElement.style.setProperty('--primary-color', settings.value.primaryColor)
+        if (settings.value.primaryColor) {
+            document.documentElement.style.setProperty('--primary-color', settings.value.primaryColor)
+        }
 
-        // Применяем язык
-        document.documentElement.lang = settings.value.language
+        if (settings.value.language) {
+            document.documentElement.lang = settings.value.language
+        }
     }
 
     const resetSettings = () => {
         const defaultSettings = {
-            systemName: 'Dashboard',
-            language: 'ru',
-            timezone: 'UTC+3',
-            theme: 'light',
-            primaryColor: '#3498db',
+            systemName: null,
+            language: null,
+            timezone: null,
+            theme: null,
+            primaryColor: null,
             notifications: {
-                email: true,
-                browser: false
+                email: null,
+                browser: null
             }
         }
         saveSettings(defaultSettings)

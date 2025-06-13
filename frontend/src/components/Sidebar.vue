@@ -1,5 +1,9 @@
 <template>
-  <aside class="sidebar" :class="{ 'sidebar-collapsed': isCollapsed }">
+  <aside class="sidebar" :class="{
+    'sidebar-collapsed': isCollapsed,
+    'mobile-open': isMobileSidebarOpen && isMobile,
+    'mobile': isMobile
+  }">
     <div class="sidebar-header">
       <div class="logo-container">
         <img src="@/assets/logo.svg" alt="Logo" class="logo" />
@@ -7,18 +11,27 @@
       </div>
     </div>
 
-    <div class="user-info" v-if="store.user">
-      <img :src="store.user.avatar_url" alt="User Avatar" class="avatar" />
+    <div class="user-info" v-if="store.currentUser">
+      <img
+        :src="store.currentUser.avatar_url || defaultAvatar"
+        alt="User Avatar"
+        class="avatar"
+        @error="handleAvatarError"
+      />
       <div class="user-details">
-        <h3>{{ store.user.username }}</h3>
-        <p>{{ store.user.email }}</p>
+        <h3>{{ store.currentUser.username }}</h3>
+        <p>{{ store.currentUser.email }}</p>
       </div>
     </div>
     <div v-else-if="store.loading" class="loading">
       Загрузка...
     </div>
     <div v-else class="user-info">
-      <img src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" alt="Default Avatar" class="avatar" />
+      <img
+        :src="defaultAvatar"
+        alt="Default Avatar"
+        class="avatar"
+      />
       <div class="user-details">
         <h3>Гость</h3>
         <p>Пожалуйста, войдите</p>
@@ -41,7 +54,12 @@
         <span v-if="!isCollapsed">Пользователи</span>
       </router-link>
 
-      <router-link to="/sova/factories" class="nav-item" active-class="active">
+      <router-link
+        v-if="canAccessFactories"
+        to="/sova/factories"
+        class="nav-item"
+        active-class="active"
+      >
         <i class="fas fa-industry"></i>
         <span v-if="!isCollapsed">Заводы</span>
       </router-link>
@@ -59,7 +77,8 @@
         <button class="logout-btn" @click="logout" title="Выйти">
           <i class="fas fa-sign-out-alt"></i>
         </button>
-        <button class="collapse-btn" @click="toggleSidebar"
+        <button class="collapse-btn"
+          @click="toggleSidebar"
           :title="isCollapsed ? 'Развернуть панель' : 'Свернуть панель'">
           <i :class="isCollapsed ? 'fas fa-chevron-right' : 'fas fa-chevron-left'"></i>
         </button>
@@ -69,64 +88,82 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import { useMainStore } from '@/store'
 import ThemeToggle from './ThemeToggle.vue'
+import { useRouter } from 'vue-router'
 
 const store = useMainStore()
+const router = useRouter()
 
-onMounted(async () => {
-  await store.fetchCurrentUser()
+const props = defineProps({
+  isMobileSidebarOpen: Boolean,
+  isMobile: Boolean
 })
 
+const emits = defineEmits(['close-mobile-sidebar'])
+
 const isCollapsed = ref(false)
-const isTasksOpen = ref(false)
-const isSovaOpen = ref(false)
+// const isTasksOpen = ref(false)
+// const isSovaOpen = ref(false)
+
+// Аватар по умолчанию из UI Avatars
+const defaultAvatar = 'https://ui-avatars.com/api/?background=random&name=User'
+
+// Обработчик ошибки загрузки аватара
+const handleAvatarError = (event) => {
+  event.target.src = defaultAvatar
+}
+
+// Проверка доступа к заводам
+const canAccessFactories = computed(() => {
+  if (!store.currentUser) return false
+
+  const userRole = store.currentUser.role
+  return userRole === 'admin' || userRole === 'architect'
+})
 
 const toggleSidebar = () => {
   isCollapsed.value = !isCollapsed.value
 }
 
-const handleTasksClick = () => {
-  if (isCollapsed.value) {
-    isCollapsed.value = false
-    isTasksOpen.value = true
-  } else {
-    isTasksOpen.value = !isTasksOpen.value
-  }
-}
-
-const handleSovaClick = () => {
-  if (isCollapsed.value) {
-    isCollapsed.value = false
-    isSovaOpen.value = true
-  } else {
-    isSovaOpen.value = !isSovaOpen.value
-  }
-}
-
 const logout = () => {
   store.logout()
+  router.push('/login')
 }
 </script>
 
 <style lang="scss" scoped>
+@use '@/assets/scss/mixins' as *;
+
 .sidebar {
   position: fixed;
   top: 0;
   left: 0;
   bottom: 0;
-  width: 250px;
+  width: var(--sidebar-width);
   background-color: var(--bg-secondary);
   border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
-  transition: width 0.3s ease;
+  transition: transform 0.3s ease, width 0.3s ease;
   z-index: 1000;
   overflow: hidden;
 
-  &-collapsed {
-    width: 70px;
+  &.mobile {
+    transform: translateX(-100%);
+
+    &.mobile-open {
+      transform: translateX(0);
+    }
+  }
+
+  &.sidebar-collapsed {
+    width: var(--sidebar-collapsed-width);
+  }
+
+  @include sm-up {
+    transform: none !important;
   }
 
   &-header {
@@ -136,6 +173,12 @@ const logout = () => {
     justify-content: space-between;
     border-bottom: 1px solid var(--border-color);
     flex-shrink: 0;
+    transition: padding 0.3s ease;
+
+    .sidebar-collapsed & {
+      padding: 1.5rem 0.5rem;
+      justify-content: center;
+    }
   }
 
   &-nav {
@@ -168,6 +211,12 @@ const logout = () => {
   gap: 1rem;
   border-bottom: 1px solid var(--border-color);
   background-color: var(--bg-tertiary);
+  transition: padding 0.3s ease;
+
+  .sidebar-collapsed & {
+    padding: 1rem 0.5rem;
+    justify-content: center;
+  }
 
   .avatar {
     width: 40px;
@@ -175,22 +224,34 @@ const logout = () => {
     border-radius: 50%;
     object-fit: cover;
     border: 1px solid var(--border-color);
+    flex-shrink: 0;
   }
 
   .user-details {
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
+    min-width: 0;
+
+    .sidebar-collapsed & {
+      display: none;
+    }
   }
 
   .user-details h3 {
     font-weight: 600;
     color: var(--text-color);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .user-details p {
     font-size: 0.875rem;
     color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 
@@ -227,6 +288,12 @@ const logout = () => {
     display: flex;
     align-items: center;
     gap: 0.75rem;
+    transition: gap 0.3s ease;
+
+    .sidebar-collapsed & {
+      gap: 0;
+      justify-content: center;
+    }
   }
 }
 
@@ -235,6 +302,11 @@ const logout = () => {
   font-weight: 600;
   color: var(--text-color);
   white-space: nowrap;
+  transition: opacity 0.3s ease;
+
+  .sidebar-collapsed & {
+    display: none;
+  }
 }
 
 .nav-item {
@@ -334,6 +406,7 @@ const logout = () => {
     color: var(--primary-color);
     background-color: var(--bg-secondary);
   }
+
 }
 
 .loading {

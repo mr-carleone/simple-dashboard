@@ -9,14 +9,16 @@ export default {
   name: 'ThemeToggle',
   data() {
     return {
-      isDark: false
+      isDark: null
     }
   },
   created() {
     // Проверяем сохраненную тему
     const savedTheme = localStorage.getItem('theme')
     this.isDark = savedTheme === 'dark'
-    this.applyTheme()
+    if (this.isDark !== null) {
+      this.applyTheme()
+    }
   },
   methods: {
     toggleTheme() {
@@ -25,13 +27,18 @@ export default {
       localStorage.setItem('theme', this.isDark ? 'dark' : 'light')
     },
     applyTheme() {
-      document.documentElement.setAttribute('data-theme', this.isDark ? 'dark' : 'light')
+      if (this.isDark !== null) {
+        document.documentElement.setAttribute('data-theme', this.isDark ? 'dark' : 'light')
+      }
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+@use '@/assets/scss/mixins' as *;
+@use '@/assets/scss/variables' as *;
+
 .theme-toggle {
   display: flex;
   align-items: center;
@@ -47,20 +54,34 @@ export default {
   width: 32px;
   height: 32px;
 
+  @include mobile {
+    font-size: 1.125rem;
+    width: 30px;
+    height: 30px;
+  }
+
+  @include xs-only {
+    font-size: 1rem;
+    width: 28px;
+    height: 28px;
+  }
+
   i {
     width: 20px;
     text-align: center;
+
+    @include mobile {
+      width: 18px;
+    }
+
+    @include xs-only {
+      width: 16px;
+    }
   }
 
   &:hover {
     background-color: var(--bg-tertiary);
     color: var(--primary-color);
-  }
-}
-
-@media (max-width: 768px) {
-  .theme-toggle {
-    font-size: 1.1rem;
   }
 }
 </style>

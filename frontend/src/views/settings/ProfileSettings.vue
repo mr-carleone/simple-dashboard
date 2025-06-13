@@ -4,7 +4,7 @@
       <h2>Личная информация</h2>
       <div class="settings-grid">
         <div class="setting-item">
-          <label>Аватар</label>
+          <label for="avatarUpload">Аватар</label>
           <div class="avatar-upload"
                @dragover.prevent
                @dragenter.prevent="isDragging = true"
@@ -13,26 +13,26 @@
                :class="{ 'dragging': isDragging }">
             <div class="avatar-preview">
               <img v-if="profile.avatar" :src="profile.avatar" alt="Avatar" />
-              <i v-else class="fas fa-user"></i>
+              <font-awesome-icon v-else :icon="['fas', 'user']" class="default-avatar"></font-awesome-icon>
               <div v-if="isDragging" class="drop-overlay">
-                <i class="fas fa-cloud-upload-alt"></i>
+                <font-awesome-icon :icon="['fas', 'cloud-upload-alt']"></font-awesome-icon>
                 <span>Отпустите для загрузки</span>
               </div>
             </div>
             <div class="avatar-actions">
-              <label class="btn btn-outline">
-                <i class="fas fa-upload"></i>
-                Загрузить
+              <label class="btn-icon" title="Загрузить">
+                <font-awesome-icon :icon="['fas', 'upload']"></font-awesome-icon>
                 <input
                   type="file"
+                  id="avatarUpload"
+                  name="avatarUpload"
                   accept="image/*"
                   class="hidden"
                   @change="handleFileSelect"
                 />
               </label>
-              <button v-if="profile.avatar" class="btn btn-outline text-danger" @click="removeAvatar">
-                <i class="fas fa-trash"></i>
-                Удалить
+              <button v-if="profile.avatar" class="btn-icon text-danger" @click="removeAvatar" title="Удалить">
+                <font-awesome-icon :icon="['fas', 'trash']"></font-awesome-icon>
               </button>
             </div>
           </div>
@@ -40,17 +40,38 @@
 
         <div class="setting-item">
           <label for="name">Имя</label>
-          <input type="text" id="name" v-model="profile.name" placeholder="Введите ваше имя" />
+          <input
+            type="text"
+            id="name"
+            name="name"
+            v-model="profile.name"
+            placeholder="Введите ваше имя"
+            autocomplete="name"
+          />
         </div>
 
         <div class="setting-item">
           <label for="email">Email</label>
-          <input type="email" id="email" v-model="profile.email" placeholder="Введите ваш email" />
+          <input
+            type="email"
+            id="email"
+            name="email"
+            v-model="profile.email"
+            placeholder="Введите ваш email"
+            autocomplete="email"
+          />
         </div>
 
         <div class="setting-item">
           <label for="phone">Телефон</label>
-          <input type="tel" id="phone" v-model="profile.phone" placeholder="Введите ваш телефон" />
+          <input
+            type="tel"
+            id="phone"
+            name="phone"
+            v-model="profile.phone"
+            placeholder="Введите ваш телефон"
+            autocomplete="tel"
+          />
         </div>
       </div>
     </div>
@@ -60,39 +81,56 @@
       <div class="settings-grid">
         <div class="setting-item">
           <label for="company">Компания</label>
-          <input type="text" id="company" v-model="profile.company" placeholder="Введите название компании" />
+          <input
+            type="text"
+            id="company"
+            name="company"
+            v-model="profile.company"
+            placeholder="Введите название компании"
+            autocomplete="organization"
+          />
         </div>
 
         <div class="setting-item">
           <label for="position">Должность</label>
-          <input type="text" id="position" v-model="profile.position" placeholder="Введите вашу должность" />
+          <input
+            type="text"
+            id="position"
+            name="position"
+            v-model="profile.position"
+            placeholder="Введите вашу должность"
+            autocomplete="organization-title"
+          />
         </div>
 
         <div class="setting-item">
           <label for="bio">О себе</label>
-          <textarea id="bio" v-model="profile.bio" placeholder="Расскажите о себе" rows="4"></textarea>
+          <textarea
+            id="bio"
+            name="bio"
+            v-model="profile.bio"
+            placeholder="Расскажите о себе"
+            rows="4"
+          ></textarea>
         </div>
       </div>
     </div>
 
     <div class="settings-actions">
       <button class="btn btn-outline" @click="resetProfile">
-        <i class="fas fa-undo"></i>
-        Сбросить
+        <font-awesome-icon :icon="['fas', 'undo']"></font-awesome-icon>
+        <span>Сбросить</span>
       </button>
       <button class="btn btn-primary" @click="saveProfile">
-        <i class="fas fa-save"></i>
-        Сохранить
+        <font-awesome-icon :icon="['fas', 'save']"></font-awesome-icon>
+        <span>Сохранить</span>
       </button>
     </div>
-
-    <!-- Секция смены пароля была здесь и будет перемещена в SecuritySettings.vue -->
   </div>
 </template>
 
 <script>
 import { useProfileStore } from '@/store/profile'
-import { ref } from 'vue'
 
 export default {
   name: 'ProfileSettings',
@@ -110,10 +148,6 @@ export default {
         { value: '#9b59b6', name: 'Purple' }
       ],
       isDragging: false,
-      // currentPassword: '', // Перемещены в SecuritySettings.vue
-      // newPassword: '', // Перемещены в SecuritySettings.vue
-      // confirmPassword: '', // Перемещены в SecuritySettings.vue
-      // passwordErrors: [] // Перемещены в SecuritySettings.vue
     }
   },
   computed: {
@@ -125,10 +159,6 @@ export default {
         this.profileStore.profile = value
       }
     },
-    // isNewPasswordLongEnough: null, // Перемещены в SecuritySettings.vue
-    // isNewPasswordEnglishOnly: null, // Перемещены в SecuritySettings.vue
-    // hasNewPasswordUppercase: null, // Перемещены в SecuritySettings.vue
-    // hasNewPasswordEnoughSpecialChars: null // Перемещены в SecuritySettings.vue
   },
   async created() {
     await this.profileStore.loadProfile()
@@ -211,18 +241,29 @@ export default {
       this.profileStore.loadProfile()
       this.$message.success('Профиль сброшен')
     },
-    // validateNewPassword() { ... }, // Перемещены в SecuritySettings.vue
-    // async changePassword() { ... } // Перемещены в SecuritySettings.vue
   }
 }
 </script>
 
 <style lang="scss" scoped>
+@use '@/assets/scss/mixins' as *;
+@use '@/assets/scss/variables' as *;
+
 .profile-settings {
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 2rem;
+
+  @include mobile {
+    padding: 1rem;
+    gap: 1.5rem;
+  }
+
+  @include xs-only {
+    padding: 0.75rem;
+    gap: 1rem;
+  }
 }
 
 .settings-section {
@@ -230,6 +271,16 @@ export default {
     margin: 0 0 1.5rem;
     font-size: 1.25rem;
     color: var(--text-primary);
+
+    @include mobile {
+      margin: 0 0 1rem;
+      font-size: 1.125rem;
+    }
+
+    @include xs-only {
+      margin: 0 0 0.75rem;
+      font-size: 1rem;
+    }
   }
 }
 
@@ -237,6 +288,15 @@ export default {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 1.5rem;
+
+  @include mobile {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  @include xs-only {
+    gap: 0.75rem;
+  }
 }
 
 .setting-item {
@@ -247,12 +307,19 @@ export default {
   label {
     font-size: 0.875rem;
     color: var(--text-secondary);
+
+    @include mobile {
+      font-size: 0.8125rem;
+    }
+
+    @include xs-only {
+      font-size: 0.75rem;
+    }
   }
 
   input[type='text'],
   input[type='email'],
   input[type='tel'],
-  input[type='password'],
   textarea {
     width: 100%;
     padding: 0.75rem;
@@ -261,6 +328,16 @@ export default {
     background-color: var(--input-bg);
     color: var(--text-primary);
     font-size: 0.875rem;
+
+    @include mobile {
+      padding: 0.625rem;
+      font-size: 0.8125rem;
+    }
+
+    @include xs-only {
+      padding: 0.5rem;
+      font-size: 0.75rem;
+    }
 
     &:focus {
       outline: none;
@@ -299,32 +376,32 @@ export default {
 }
 
 .avatar-upload {
-  display: flex;
-  gap: 1.5rem;
-  align-items: center;
   position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: var(--el-fill-color-light);
+  border: 2px dashed var(--el-border-color);
   transition: all 0.3s ease;
 
+  &:hover {
+    border-color: var(--el-color-primary);
+  }
+
   &.dragging {
-    .avatar-preview {
-      border-color: var(--primary-color);
-      transform: scale(1.05);
-    }
+    border-color: var(--el-color-primary);
+    background-color: var(--el-color-primary-light-9);
   }
 }
 
 .avatar-preview {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  background-color: var(--input-bg);
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
   position: relative;
-  border: 2px dashed var(--border-color);
-  transition: all 0.3s ease;
 
   img {
     width: 100%;
@@ -332,9 +409,9 @@ export default {
     object-fit: cover;
   }
 
-  i {
-    font-size: 2.5rem;
-    color: var(--text-secondary);
+  .default-avatar {
+    font-size: 48px;
+    color: var(--el-text-color-secondary);
   }
 }
 
@@ -342,23 +419,67 @@ export default {
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7);
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   color: white;
-  gap: 0.5rem;
 
-  i {
-    font-size: 2rem;
-    color: white;
+  svg {
+    font-size: 24px;
+    margin-bottom: 8px;
   }
 
   span {
-    font-size: 0.875rem;
+    font-size: 12px;
+  }
+}
+
+.avatar-actions {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.avatar-upload:hover .avatar-actions {
+  opacity: 1;
+}
+
+.btn-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: var(--el-color-primary);
+    color: white;
+  }
+
+  &.text-danger:hover {
+    background-color: var(--el-color-danger);
+    color: white;
+  }
+
+  svg {
+    font-size: 16px;
   }
 }
 
@@ -366,42 +487,31 @@ export default {
   display: none;
 }
 
-.avatar-actions {
-  display: flex;
-  gap: 0.5rem;
-}
-
 .settings-actions {
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
-  margin-top: 1.5rem;
+  margin-top: 1rem;
+
+  @include mobile {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
 
   .btn {
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.5rem;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
+    min-width: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
 
-    &.btn-outline {
-      background-color: transparent;
-      border: 1px solid var(--border-color);
-      color: var(--text-primary);
-
-      &:hover {
-        background-color: var(--bg-secondary);
-      }
+    @include mobile {
+      width: 100%;
     }
 
-    &.btn-primary {
-      background-color: var(--primary-color);
-      border: 1px solid var(--primary-color);
-      color: #fff;
-
-      &:hover {
-        opacity: 0.9;
-      }
+    .font-awesome-icon {
+      font-size: 1rem;
+      vertical-align: middle;
     }
   }
 }

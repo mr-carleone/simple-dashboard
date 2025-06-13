@@ -121,53 +121,178 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@use '@/assets/scss/mixins' as *;
+@use '@/assets/scss/variables' as *;
+
 .factory-details {
-    padding: 20px;
+  padding: 1.5rem;
+
+  @include mobile {
+    padding: 1rem;
+  }
 }
 
 .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
 
-.card-header h2 {
+  @include mobile {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  h2 {
     margin: 0;
     font-size: 1.5rem;
-    color: var(--el-text-color-primary);
+    color: var(--text-primary);
+
+    @include mobile {
+      font-size: 1.25rem;
+    }
+
+    @include xs-only {
+      font-size: 1.125rem;
+    }
+  }
+
+  .el-button-group {
+    @include mobile {
+      width: 100%;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .el-button {
+      padding: 0.6rem 1rem;
+
+      @include mobile {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.8rem;
+      }
+    }
+  }
 }
 
-.el-button-group .el-button {
-    padding: 8px 12px;
+.el-descriptions {
+  margin-bottom: 2rem;
+
+  @include mobile {
+    margin-bottom: 1.5rem;
+  }
+
+  :deep(.el-descriptions__cell) {
+    font-size: 0.9rem;
+
+    @include mobile {
+      font-size: 0.85rem;
+      display: block; /* Отображать каждый item как блок на мобильных */
+      width: 100% !important; /* Полная ширина для каждого item */
+      padding-bottom: 5px; /* Отступ между элементами */
+      padding-top: 5px;
+    }
+
+    .el-descriptions__label {
+      font-weight: 600;
+      color: var(--text-secondary);
+
+      @include mobile {
+        margin-bottom: 2px;
+      }
+    }
+
+    .el-descriptions__content {
+      color: var(--text-primary);
+    }
+
+    .el-tag {
+      font-size: 0.8rem;
+
+      @include mobile {
+        font-size: 0.7rem;
+      }
+    }
+  }
 }
 
-.requests-section,
-.users-section {
-    margin-top: 30px;
-    padding-top: 20px;
-    border-top: 1px solid var(--el-border-color-lighter);
-}
+.requests-section {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
 
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-}
+  @include mobile {
+    margin-top: 1rem;
+    padding-top: 1rem;
+  }
 
-.section-header h3 {
-    margin: 0;
+  h3 {
+    margin: 0 0 1rem;
     font-size: 1.25rem;
-    color: var(--el-text-color-regular);
+    color: var(--text-primary);
+
+    @include mobile {
+      font-size: 1.125rem;
+      margin-bottom: 0.75rem;
+    }
+
+    @include xs-only {
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+  }
 }
 
 .el-table {
-    margin-top: 15px;
+  margin-top: 1rem;
+
+  .el-table__cell {
+    padding: 10px 0;
+  }
+
+  .el-table__header-wrapper {
+    .el-table__header {
+      .el-table__cell {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+
+        @include mobile {
+          font-size: 0.8rem;
+        }
+      }
+    }
+  }
+
+  .el-table__row {
+    .el-table__cell {
+      font-size: 0.875rem;
+
+      @include mobile {
+        font-size: 0.8rem;
+      }
+
+      .el-tag {
+        font-size: 0.8rem;
+
+        @include mobile {
+          font-size: 0.7rem;
+        }
+      }
+
+      .el-button {
+        padding: 5px 8px;
+        font-size: 0.8rem;
+
+        @include mobile {
+          padding: 4px 6px;
+          font-size: 0.75rem;
+        }
+      }
+    }
+  }
 }
 
-.dialog-footer {
-    text-align: right;
-}
 </style>

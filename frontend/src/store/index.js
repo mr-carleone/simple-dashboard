@@ -1,84 +1,48 @@
 // src/store/index.js
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
-import axios from 'axios'
-import { useRouter } from 'vue-router'
+import api from '@/api/config'
 
-export const useMainStore = defineStore('main', () => {
-  const router = useRouter()
+export const useMainStore = defineStore('main', {
+  state: () => ({
+    currentUser: null,
+    isAuthenticated: false,
+    loading: false,
+    error: null
+  }),
 
-  const appName = ref(import.meta.env.VITE_APP_NAME || 'Vue3 App')
-  const isSidebarCollapsed = ref(false)
-  const user = ref(null)
-  const loading = ref(false)
-  const error = ref(null)
-
-  const updateAppName = (newName) => {
-    appName.value = newName
-  }
-  const toggleSidebar = () => {
-    isSidebarCollapsed.value = !isSidebarCollapsed.value
-  }
-  const collapseSidebar = () => {
-    isSidebarCollapsed.value = true
-  }
-  const expandSidebar = () => {
-    isSidebarCollapsed.value = false
-  }
-  const fetchCurrentUser = async () => {
-    loading.value = true
-    error.value = null
-    try {
-      const token = localStorage.getItem('token')
-      if (!token) {
-        throw new Error('No authentication token found.')
+  actions: {
+    async fetchCurrentUser() {
+      if (!localStorage.getItem('token')) {
+        this.isAuthenticated = false
+        this.currentUser = null
+        return
       }
 
-      // Специальная обработка для admin-token (для разработки/отладки)
-      if (token === 'admin-token') {
-        user.value = {
-          email: import.meta.env.VITE_USER_LOGIN,
-          username: 'Локальный Администратор',
-          role: 'admin',
-          is_active: true,
-        }
-        console.log("Вход выполнен как локальный администратор.")
-        return // Выходим после установки локального пользователя
+      if (this.loading) {
+        return
       }
 
-      // Продолжаем с запросом API для настоящих JWT токенов
-      const response = await axios.get('/api/v1/users/me', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      user.value = response.data
-    } catch (err) {
-      console.error('Ошибка получения текущего пользователя:', err)
-      error.value = err.response?.data?.detail || 'Не удалось получить пользователя'
-      user.value = null
+      this.loading = true
+      this.error = null
+      try {
+        const response = await api.get('/users/me')
+        this.currentUser = response.data
+        this.isAuthenticated = true
+      } catch (error) {
+        console.error('Ошибка получения текущего пользователя:', error)
+        this.error = error.response?.data?.detail || 'Ошибка получения данных пользователя'
+        this.isAuthenticated = false
+        this.currentUser = null
+        localStorage.removeItem('token')
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async logout() {
+      this.currentUser = null
+      this.isAuthenticated = false
       localStorage.removeItem('token')
-    } finally {
-      loading.value = false
     }
-  }
-  const logout = () => {
-    user.value = null
-    localStorage.removeItem('token')
-    router.push('/login')
-  }
-
-  return {
-    appName,
-    isSidebarCollapsed,
-    user,
-    loading,
-    error,
-    updateAppName,
-    toggleSidebar,
-    collapseSidebar,
-    expandSidebar,
-    fetchCurrentUser,
-    logout
   }
 })

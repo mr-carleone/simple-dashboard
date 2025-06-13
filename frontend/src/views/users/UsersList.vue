@@ -3,7 +3,16 @@
     <div class="users-filters">
       <div class="search-box">
         <i class="fas fa-search"></i>
-        <input type="text" v-model="searchQuery" placeholder="Поиск пользователей..." @input="handleSearch" />
+        <label for="userSearch" class="sr-only">Поиск пользователей</label>
+        <input
+          type="text"
+          id="userSearch"
+          name="userSearch"
+          v-model="searchQuery"
+          placeholder="Поиск пользователей..."
+          @input="handleSearch"
+          autocomplete="off"
+        />
       </div>
       <div class="filter-actions">
         <button class="btn btn-outline">
@@ -62,29 +71,9 @@ export default {
   data() {
     return {
       searchQuery: '',
-      users: [
-        {
-          id: 1,
-          name: 'John Doe',
-          email: 'john@example.com',
-          role: 'Admin',
-          status: 'active'
-        },
-        {
-          id: 2,
-          name: 'Jane Smith',
-          email: 'jane@example.com',
-          role: 'User',
-          status: 'inactive'
-        },
-        {
-          id: 3,
-          name: 'Bob Johnson',
-          email: 'bob@example.com',
-          role: 'Editor',
-          status: 'pending'
-        }
-      ]
+      users: [],
+      loading: false,
+      error: null
     }
   },
   methods: {

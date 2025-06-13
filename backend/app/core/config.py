@@ -1,7 +1,12 @@
 from pydantic_settings import BaseSettings
 from functools import lru_cache
 import os
+import secrets
 from typing import List, Optional
+
+def generate_secret_key() -> str:
+    """Генерирует криптографически безопасный секретный ключ"""
+    return secrets.token_urlsafe(32)
 
 class Settings(BaseSettings):
     # Основные настройки
@@ -27,7 +32,7 @@ class Settings(BaseSettings):
     CORS_ORIGINS: List[str] = ["http://localhost:5173"]
 
     # Настройки безопасности
-    SECRET_KEY: str = os.getenv("SECRET_KEY", "your-secret-key-here")
+    SECRET_KEY: str = os.getenv("SECRET_KEY", generate_secret_key())
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 

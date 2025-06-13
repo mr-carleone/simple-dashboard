@@ -128,7 +128,8 @@ const routes = [
     component: SovaLayout,
     meta: {
       title: 'Управление заводами',
-      requiresAuth: true
+      requiresAuth: true,
+      allowedRoles: ['admin', 'architect']
     },
     children: [
       {
@@ -173,11 +174,11 @@ router.beforeEach(async (to, from, next) => {
   const mainStore = useMainStore()
 
   // Ensure user data is loaded if a token exists and user is not yet loaded
-  if (localStorage.getItem('token') && !mainStore.user) {
+  if (localStorage.getItem('token') && !mainStore.currentUser) {
     await mainStore.fetchCurrentUser()
   }
 
-  const isAuthenticated = !!mainStore.user
+  const isAuthenticated = !!mainStore.currentUser
 
   if (to.matched.some(record => record.meta.requiresAuth)) {
     // This route requires authentication
@@ -186,6 +187,14 @@ router.beforeEach(async (to, from, next) => {
       next('/login')
     } else {
       // If authenticated, allow access
+      // Проверяем роли, если они указаны
+      if (to.meta.allowedRoles) {
+        const userRole = mainStore.currentUser?.role
+        if (!userRole || !to.meta.allowedRoles.includes(userRole)) {
+          next({ name: 'NotFound' })
+          return
+        }
+      }
       next()
     }
   } else if (to.name === 'Login' && isAuthenticated) {

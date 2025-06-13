@@ -4,21 +4,28 @@
       <h2>Общие настройки</h2>
       <div class="settings-grid">
         <div class="setting-item">
-          <label>Название системы</label>
-          <input type="text" v-model="settings.systemName" placeholder="Введите название системы" />
+          <label for="systemName">Название системы</label>
+          <input
+            type="text"
+            id="systemName"
+            name="systemName"
+            v-model="settings.systemName"
+            placeholder="Введите название системы"
+            autocomplete="organization"
+          />
         </div>
         <div class="setting-item">
-          <label>Язык интерфейса</label>
-          <select v-model="settings.language">
+          <label for="language">Язык интерфейса</label>
+          <select id="language" v-model="settings.language">
             <option value="ru">Русский</option>
             <option value="en">English</option>
           </select>
         </div>
         <div class="setting-item">
-          <label>Часовой пояс</label>
-          <select v-model="settings.timezone">
+          <label for="timezone">Часовой пояс</label>
+          <select id="timezone" v-model="settings.timezone">
             <option value="UTC+3">Москва (UTC+3)</option>
-            <option value="UTC+0">UTC</option>
+            <option value="UTC+0">Лондон (UTC+0)</option>
             <option value="UTC-5">Нью-Йорк (UTC-5)</option>
           </select>
         </div>
@@ -29,30 +36,30 @@
       <h2>Внешний вид</h2>
       <div class="settings-grid">
         <div class="setting-item">
-          <label>Тема оформления</label>
-          <div class="theme-selector">
-            <button class="theme-btn" :class="{ active: settings.theme === 'light' }" @click="settings.theme = 'light'">
-              <i class="fas fa-sun"></i>
-              Светлая
-            </button>
-            <button class="theme-btn" :class="{ active: settings.theme === 'dark' }" @click="settings.theme = 'dark'">
-              <i class="fas fa-moon"></i>
-              Тёмная
-            </button>
-          </div>
+          <label for="theme">Тема оформления</label>
+          <select id="theme" v-model="settings.theme">
+            <option value="light">Светлая</option>
+            <option value="dark">Темная</option>
+            <option value="system">Системная</option>
+          </select>
         </div>
         <div class="setting-item">
-          <label>Основной цвет</label>
-          <div class="color-selector">
-            <button
-              v-for="color in colors"
-              :key="color.value"
-              class="color-btn"
-              :class="{ active: settings.primaryColor === color.value }"
-              :style="{ backgroundColor: color.value }"
-              @click="settings.primaryColor = color.value"
-            ></button>
-          </div>
+          <label>Основной цвет
+            <div class="color-picker">
+              <button
+                v-for="color in colors"
+                :key="color.value"
+                class="color-btn"
+                :class="{ active: settings.primaryColor === color.value }"
+                :style="{ backgroundColor: color.value }"
+                @click="settings.primaryColor = color.value"
+              ></button>
+              <input type="hidden"
+id="primaryColorInput"
+name="primaryColor"
+v-model="settings.primaryColor" />
+            </div>
+          </label>
         </div>
       </div>
     </div>
@@ -61,14 +68,24 @@
       <h2>Уведомления</h2>
       <div class="settings-grid">
         <div class="setting-item">
-          <label class="checkbox-label">
-            <input type="checkbox" v-model="settings.notifications.email" />
+          <label class="checkbox-label" for="emailNotifications">
+            <input
+              type="checkbox"
+              id="emailNotifications"
+              name="emailNotifications"
+              v-model="settings.notifications.email"
+            />
             <span>Email уведомления</span>
           </label>
         </div>
         <div class="setting-item">
-          <label class="checkbox-label">
-            <input type="checkbox" v-model="settings.notifications.browser" />
+          <label class="checkbox-label" for="browserNotifications">
+            <input
+              type="checkbox"
+              id="browserNotifications"
+              name="browserNotifications"
+              v-model="settings.notifications.browser"
+            />
             <span>Браузерные уведомления</span>
           </label>
         </div>
@@ -139,11 +156,24 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@use '@/assets/scss/mixins' as *;
+@use '@/assets/scss/variables' as *;
+
 .system-settings {
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 2rem;
+
+  @include mobile {
+    padding: 1rem;
+    gap: 1.5rem;
+  }
+
+  @include xs-only {
+    padding: 0.75rem;
+    gap: 1rem;
+  }
 }
 
 .settings-section {
@@ -151,6 +181,16 @@ export default {
     margin: 0 0 1.5rem;
     font-size: 1.25rem;
     color: var(--text-primary);
+
+    @include mobile {
+      margin: 0 0 1rem;
+      font-size: 1.125rem;
+    }
+
+    @include xs-only {
+      margin: 0 0 0.75rem;
+      font-size: 1rem;
+    }
   }
 }
 
@@ -158,6 +198,15 @@ export default {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 1.5rem;
+
+  @include mobile {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  @include xs-only {
+    gap: 0.75rem;
+  }
 }
 
 .setting-item {
@@ -168,6 +217,14 @@ export default {
   label {
     font-size: 0.875rem;
     color: var(--text-secondary);
+
+    @include mobile {
+      font-size: 0.8125rem;
+    }
+
+    @include xs-only {
+      font-size: 0.75rem;
+    }
   }
 
   input[type='text'],
@@ -179,6 +236,16 @@ export default {
     background-color: var(--input-bg);
     color: var(--text-primary);
     font-size: 0.875rem;
+
+    @include mobile {
+      padding: 0.625rem;
+      font-size: 0.8125rem;
+    }
+
+    @include xs-only {
+      padding: 0.5rem;
+      font-size: 0.75rem;
+    }
 
     &:focus {
       outline: none;
@@ -194,6 +261,11 @@ export default {
 .theme-selector {
   display: flex;
   gap: 1rem;
+
+  @include mobile {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
 }
 
 .theme-btn {
@@ -209,6 +281,17 @@ export default {
   color: var(--text-primary);
   cursor: pointer;
   transition: all 0.2s;
+  font-size: 0.875rem;
+
+  @include mobile {
+    padding: 0.625rem;
+    font-size: 0.8125rem;
+  }
+
+  @include xs-only {
+    padding: 0.5rem;
+    font-size: 0.75rem;
+  }
 
   &:hover {
     border-color: var(--primary-color);
@@ -224,6 +307,11 @@ export default {
 .color-selector {
   display: flex;
   gap: 0.5rem;
+  flex-wrap: wrap;
+
+  @include mobile {
+    gap: 0.375rem;
+  }
 }
 
 .color-btn {
@@ -233,6 +321,16 @@ export default {
   border-radius: 50%;
   cursor: pointer;
   transition: all 0.2s;
+
+  @include mobile {
+    width: 28px;
+    height: 28px;
+  }
+
+  @include xs-only {
+    width: 24px;
+    height: 24px;
+  }
 
   &:hover {
     transform: scale(1.1);
@@ -248,11 +346,30 @@ export default {
   align-items: center;
   gap: 0.5rem;
   cursor: pointer;
+  font-size: 0.875rem;
+
+  @include mobile {
+    font-size: 0.8125rem;
+  }
+
+  @include xs-only {
+    font-size: 0.75rem;
+  }
 
   input[type='checkbox'] {
     width: 18px;
     height: 18px;
     cursor: pointer;
+
+    @include mobile {
+      width: 16px;
+      height: 16px;
+    }
+
+    @include xs-only {
+      width: 14px;
+      height: 14px;
+    }
   }
 }
 
@@ -261,15 +378,18 @@ export default {
   justify-content: flex-end;
   gap: 1rem;
   margin-top: 1rem;
-}
 
-@media (max-width: 768px) {
-  .settings-grid {
-    grid-template-columns: 1fr;
+  @include mobile {
+    flex-direction: column;
+    gap: 0.75rem;
   }
 
-  .theme-selector {
-    flex-direction: column;
+  .btn {
+    min-width: 120px;
+
+    @include mobile {
+      width: 100%;
+    }
   }
 }
 </style>
