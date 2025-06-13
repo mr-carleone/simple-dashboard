@@ -17,8 +17,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Копирование исходного кода
 COPY . .
 
-# TODO: нужно создать в таблице users при инициализации базы данных пользователя admin с паролем admin и email admin@admin.com
-
 
 # Создание скрипта для проверки доступности базы данных
 RUN echo '#!/bin/bash\n\
