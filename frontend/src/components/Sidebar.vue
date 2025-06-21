@@ -6,35 +6,7 @@
   }">
     <div class="sidebar-header">
       <div class="logo-container">
-        <img src="@/assets/logo.svg" alt="Logo" class="logo" />
-        <span v-if="!isCollapsed" class="logo-text">Dashboard</span>
-      </div>
-    </div>
-
-    <div class="user-info" v-if="store.currentUser">
-      <img
-        :src="store.currentUser.avatar_url || defaultAvatar"
-        alt="User Avatar"
-        class="avatar"
-        @error="handleAvatarError"
-      />
-      <div class="user-details">
-        <h3>{{ store.currentUser.username }}</h3>
-        <p>{{ store.currentUser.email }}</p>
-      </div>
-    </div>
-    <div v-else-if="store.loading" class="loading">
-      Загрузка...
-    </div>
-    <div v-else class="user-info">
-      <img
-        :src="defaultAvatar"
-        alt="Default Avatar"
-        class="avatar"
-      />
-      <div class="user-details">
-        <h3>Гость</h3>
-        <p>Пожалуйста, войдите</p>
+        <img :src="isCollapsed ? logoIcon : logoFull" alt="Logo" class="logo" />
       </div>
     </div>
 
@@ -72,6 +44,21 @@
     </nav>
 
     <div class="sidebar-footer">
+      <div class="user-info" v-if="store.currentUser && !isCollapsed">
+        <img
+          :src="store.currentUser.avatar_url || defaultAvatar"
+          alt="User Avatar"
+          class="avatar"
+          @error="handleAvatarError"
+        />
+        <div class="user-details">
+          <span class="username">{{ store.currentUser.username }}</span>
+        </div>
+      </div>
+      <div v-else-if="store.loading && !isCollapsed" class="loading">
+        Загрузка...
+      </div>
+
       <div class="footer-actions">
         <ThemeToggle />
         <button class="logout-btn" @click="logout" title="Выйти">
@@ -92,6 +79,8 @@ import { onMounted, ref, computed } from 'vue'
 import { useMainStore } from '@/store'
 import ThemeToggle from './ThemeToggle.vue'
 import { useRouter } from 'vue-router'
+import logoFull from '@/assets/logo.svg'
+import logoIcon from '@/assets/logo-icon.svg'
 
 const store = useMainStore()
 const router = useRouter()
@@ -167,17 +156,16 @@ const logout = () => {
   }
 
   &-header {
-    padding: 1.5rem;
+    padding: 1.25rem 1.5rem;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     border-bottom: 1px solid var(--border-color);
     flex-shrink: 0;
     transition: padding 0.3s ease;
 
     .sidebar-collapsed & {
-      padding: 1.5rem 0.5rem;
-      justify-content: center;
+      padding: 1.25rem 0.5rem;
     }
   }
 
@@ -202,56 +190,40 @@ const logout = () => {
   gap: 0.5rem;
   align-items: center;
   padding: 0.5rem 0;
+  margin-top: 0.75rem;
 }
 
 .user-info {
-  padding: 1rem 1.5rem;
+  padding: 0.75rem 1rem;
   display: flex;
   align-items: center;
-  gap: 1rem;
-  border-bottom: 1px solid var(--border-color);
-  background-color: var(--bg-tertiary);
+  justify-content: center;
   transition: padding 0.3s ease;
-
-  .sidebar-collapsed & {
-    padding: 1rem 0.5rem;
-    justify-content: center;
-  }
+  margin-bottom: 0.5rem;
 
   .avatar {
     width: 40px;
     height: 40px;
     border-radius: 50%;
     object-fit: cover;
-    border: 1px solid var(--border-color);
+    border: 2px solid var(--border-color);
     flex-shrink: 0;
+    margin-right: 0.75rem;
   }
 
   .user-details {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
     min-width: 0;
 
-    .sidebar-collapsed & {
-      display: none;
+    .username {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-color);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-  }
-
-  .user-details h3 {
-    font-weight: 600;
-    color: var(--text-color);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .user-details p {
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 }
 
@@ -280,25 +252,20 @@ const logout = () => {
 }
 
 .logo {
-  height: 32px;
-  width: 32px;
+  height: 48px;
+  width: auto;
   flex-shrink: 0;
 
   &-container {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    transition: gap 0.3s ease;
-
-    .sidebar-collapsed & {
-      gap: 0;
-      justify-content: center;
-    }
+    justify-content: center;
+    transition: all 0.3s ease;
   }
 }
 
 .logo-text {
-  font-size: 1.25rem;
+  font-size: 1rem;
   font-weight: 600;
   color: var(--text-color);
   white-space: nowrap;
@@ -420,8 +387,13 @@ const logout = () => {
     width: 70px;
 
     &:not(.sidebar-collapsed) {
-      width: 250px;
+      width: 280px;
     }
+  }
+
+  .logo {
+    height: 40px;
+    width: auto;
   }
 
   .nav-item {

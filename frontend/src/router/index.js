@@ -3,9 +3,6 @@ import HomeView from '../views/HomeView.vue'
 import LoginView from '../views/LoginView.vue'
 import NotFoundView from '../views/NotFoundView.vue'
 import UsersLayout from '../views/users/UsersLayout.vue'
-import UsersList from '../views/users/UsersList.vue'
-import UserDetails from '../views/users/UserDetails.vue'
-import UserEdit from '../views/users/UserEdit.vue'
 import SettingsLayout from '../views/settings/SettingsLayout.vue'
 import SystemSettings from '../views/settings/SystemSettings.vue'
 import ProfileSettings from '../views/settings/ProfileSettings.vue'
@@ -52,35 +49,6 @@ const routes = [
       title: 'Пользователи',
       requiresAuth: true
     },
-    children: [
-      {
-        path: '',
-        name: 'UsersList',
-        component: UsersList,
-        meta: {
-          title: 'Список пользователей',
-          requiresAuth: true
-        }
-      },
-      {
-        path: ':id',
-        name: 'UserDetails',
-        component: UserDetails,
-        meta: {
-          title: 'Детали пользователя',
-          requiresAuth: true
-        }
-      },
-      {
-        path: ':id/edit',
-        name: 'UserEdit',
-        component: UserEdit,
-        meta: {
-          title: 'Редактирование пользователя',
-          requiresAuth: true
-        }
-      }
-    ]
   },
   // Вложенные настройки
   {

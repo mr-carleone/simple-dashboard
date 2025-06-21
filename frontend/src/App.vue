@@ -66,7 +66,9 @@ export default {
     }
 
     const showSidebar = computed(() => {
-      const shouldShow = router.currentRoute.value.name !== 'Login'
+      const currentRoute = router.currentRoute.value
+      // Скрываем сайдбар для страниц логина и 404
+      const shouldShow = currentRoute.name !== 'Login' && currentRoute.name !== 'NotFound'
       return shouldShow
     })
 
